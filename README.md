@@ -93,6 +93,18 @@ Proprietà della mappa del presente (*Mappa → Proprietà mappa*):
 | `uscita` | `tocco` (si esce toccando `finish`, predefinito), `porta` (si esce premendo E), `passato` (nel presente `finish` è un muro chiuso), `tesoro` (E apre il tesoro e il gioco finisce) |
 | `titolo` | nome del livello mostrato all'inizio |
 
+## Novità più recenti
+
+- **Piattaforme che crollano:** tremano quando ci sali e poi cadono; dopo 3 secondi ricompaiono. In Tiled sono oggetti `crollo` al posto di `solid`, e i loro tile vengono staccati dalla mappa automaticamente.
+- **Piattaforme mobili:** si muovono avanti e indietro (o su e giù) e ti trasportano. Ci si sale solo da sopra. In Tiled sono oggetti `mobile` con le proprietà `dx`, `dy` (pixel, `dy` positivo = verso l'alto) e `durata` (secondi).
+- **Leve e gabbie:** alcuni scarabei sono chiusi in una gabbia. La leva per aprirla è spesso nell'altra epoca. In Tiled sono oggetti `leva` e `gabbia`; una leva apre tutte le gabbie del livello.
+- **Selezione livelli** (menu > LIVELLI): rigiochi i livelli già raggiunti, con il tuo miglior tempo per ognuno.
+- **Modalità difficile:** si sblocca dopo aver finito il gioco. Hai 10 viaggi nel tempo per ogni tentativo e il cronometro è sempre visibile. Finirla sblocca il trofeo "Maestro del tempo".
+- **Due livelli nuovi:** 12 *Il ponte crollato* e 13 *Il pozzo del tempo*, costruiti per usare le nuove meccaniche. La stanza del tesoro ora è il livello 14.
+- 2 trofei nuovi (13 in totale) e 6 scarabei in più (39 in totale).
+
+La versione precedente a queste novità è salvata nel ramo `salvataggio-prima-di-leve-e-livelli`.
+
 ## Novità di Sands of Time 2
 
 **Personaggio e livello finale**
@@ -117,7 +129,7 @@ Proprietà della mappa del presente (*Mappa → Proprietà mappa*):
 **Gameplay**
 - **33 scarabei d'oro** da raccogliere, alcuni solo nel passato. Contatore nell'HUD.
 - **10 tavolette con geroglifici** (livelli 2–11): premi E per leggere un pezzo della storia di Thot.
-- **11 trofei**, consultabili dal menu (TROFEI), con notifica quando li sblocchi.
+- **11 trofei** (ora 13), consultabili dal menu (TROFEI), con notifica quando li sblocchi.
 
 **Audio**
 - Passi diversi su sabbia e su pietra, gocce d'acqua lontane nella piramide, vento nel deserto.
