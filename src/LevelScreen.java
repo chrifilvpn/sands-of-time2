@@ -83,6 +83,21 @@ public class LevelScreen extends BaseScreen
     private final ArrayList<Tavoletta> tavolette = new ArrayList<Tavoletta>();
     private Tavoletta tavolettaVicina;
 
+    /** Piattaforme che crollano, piattaforme mobili, leve e gabbie. */
+    private static class Leva { Oggetto area; Image img; boolean passato; boolean tirata; }
+    private static class Gabbia { Oggetto area; Image img; boolean passato; boolean aperta; }
+    private final ArrayList<Crollo> crolli = new ArrayList<Crollo>();
+    private final ArrayList<PiattaformaMobile> mobili = new ArrayList<PiattaformaMobile>();
+    private final ArrayList<Leva> leve = new ArrayList<Leva>();
+    private final ArrayList<Gabbia> gabbie = new ArrayList<Gabbia>();
+    private final ArrayList<Oggetto> appoggi = new ArrayList<Oggetto>();
+    private PiattaformaMobile suMobile = null;
+    private Leva levaVicina;
+
+    /** Modalità difficile: viaggi nel tempo limitati per ogni tentativo. */
+    public static final int VIAGGI_DIFFICILE = 10;
+    private int viaggiRimasti = -1;
+
     /** Ultime posizioni del personaggio (per la scia di fantasmi del viaggio nel tempo). */
     private static final int STORIA = 24;
     private final float[] storiaX = new float[STORIA], storiaY = new float[STORIA];
@@ -139,7 +154,10 @@ public class LevelScreen extends BaseScreen
         if (StatoPartita.livelloCorrente != livello) {
             StatoPartita.livelloCorrente = livello;
             StatoPartita.mortiNelLivello = 0;
+            StatoPartita.tempoLivello = 0f;
         }
+        viaggiRimasti = StatoPartita.difficile ? VIAGGI_DIFFICILE : -1;
+        Save.registraLivello(livello);
 
         // ---------- mappe e luci delle torce ----------
         mappaPresente = new TilemapActor("assets/mappa" + livello + "_presente.tmx", mainStage);
@@ -157,9 +175,9 @@ public class LevelScreen extends BaseScreen
         float dimensione = mappaPresente.getProprietaNumero("dimensionePersonaggio", 57.6f);
 
         // ---------- oggetti ----------
-        uscitaPresente = caricaOggetti(mappaPresente, solidiPresente, trappolePresente);
+        uscitaPresente = caricaOggetti(mappaPresente, solidiPresente, trappolePresente, false);
         if (mappaPassato != null)
-            uscitaPassato = caricaOggetti(mappaPassato, solidiPassato, trappolePassato);
+            uscitaPassato = caricaOggetti(mappaPassato, solidiPassato, trappolePassato, true);
 
         // nel livello con uscita "passato" la porta del presente è chiusa: diventa un muro
         if (tipoUscita.equals("passato") && uscitaPresente != null) {
@@ -177,6 +195,8 @@ public class LevelScreen extends BaseScreen
         caricaScarabei(mappaPresente, false);
         if (mappaPassato != null) caricaScarabei(mappaPassato, true);
         caricaTavolette(mappaPresente);
+        caricaMeccaniche(mappaPresente, false);
+        if (mappaPassato != null) caricaMeccaniche(mappaPassato, true);
 
         // ---------- epoca iniziale ----------
         boolean passato = passatoIniziale && mappaPassato != null;
@@ -217,10 +237,19 @@ public class LevelScreen extends BaseScreen
     }
 
     /** Legge solidi, trappole e uscita di una mappa. Restituisce l'uscita (o null). */
-    private Oggetto caricaOggetti(TilemapActor mappa, List<Oggetto> solidi, List<Oggetto> trappole)
+    private Oggetto caricaOggetti(TilemapActor mappa, List<Oggetto> solidi, List<Oggetto> trappole, boolean passato)
     {
         for (MapObject obj : mappa.getObjectList("solid"))
             solidi.add(Oggetto.daMappa(obj, Oggetto.Tipo.SOLIDO, mainStage));
+        // piattaforme che crollano: sono solidi, ma i loro tile vengono "staccati" dalla mappa per poterli far cadere
+        for (MapObject obj : mappa.getObjectList("crollo")) {
+            Oggetto o = Oggetto.daMappa(obj, Oggetto.Tipo.SOLIDO, mainStage);
+            solidi.add(o);
+            com.badlogic.gdx.scenes.scene2d.Group g = mappa.ritagliaTile(o.getRettangolo());
+            g.setTouchable(Touchable.disabled);
+            mainStage.addActor(g);
+            crolli.add(new Crollo(o, g, passato));
+        }
         for (MapObject obj : mappa.getObjectList("kill"))
             trappole.add(Oggetto.daMappa(obj, Oggetto.Tipo.TRAPPOLA, mainStage));
         MapObject fine = primo(mappa, "finish");
@@ -271,6 +300,48 @@ public class LevelScreen extends BaseScreen
             mainStage.addActor(t.img);
             tavolette.add(t);
         }
+    }
+
+    /** Piattaforme mobili, leve e gabbie di una mappa. */
+    private void caricaMeccaniche(TilemapActor mappa, boolean passato)
+    {
+        for (MapObject obj : mappa.getObjectList("mobile")) {
+            Oggetto area = Oggetto.daMappa(obj, Oggetto.Tipo.SOLIDO, mainStage);
+            Image img = new Image(Risorse.piattaforma);
+            img.setSize(area.getWidth(), 20);
+            img.setTouchable(Touchable.disabled);
+            mainStage.addActor(img);
+            mobili.add(new PiattaformaMobile(area, img, passato,
+                    proprieta(obj, "dx", 120), proprieta(obj, "dy", 0), proprieta(obj, "durata", 2.5f)));
+        }
+        for (MapObject obj : mappa.getObjectList("gabbia")) {
+            Gabbia g = new Gabbia();
+            g.passato = passato;
+            g.area = Oggetto.daMappa(obj, Oggetto.Tipo.INTERAZIONE, mainStage);
+            g.img = new Image(Risorse.gabbia);
+            g.img.setBounds(g.area.getX(), g.area.getY(), g.area.getWidth(), g.area.getHeight());
+            g.img.setTouchable(Touchable.disabled);
+            mainStage.addActor(g.img);
+            gabbie.add(g);
+        }
+        for (MapObject obj : mappa.getObjectList("leva")) {
+            Leva l = new Leva();
+            l.passato = passato;
+            l.area = Oggetto.daMappa(obj, Oggetto.Tipo.INTERAZIONE, mainStage);
+            l.img = new Image(Risorse.leva1);
+            l.img.setBounds(l.area.getX(), l.area.getY(), l.area.getWidth(), l.area.getHeight());
+            l.img.setTouchable(Touchable.disabled);
+            mainStage.addActor(l.img);
+            leve.add(l);
+        }
+    }
+
+    private static float proprieta(MapObject obj, String nome, float predefinito)
+    {
+        Object v = obj.getProperties().get(nome);
+        if (v == null) return predefinito;
+        if (v instanceof Number) return ((Number) v).floatValue();
+        try { return Float.parseFloat(v.toString()); } catch (NumberFormatException e) { return predefinito; }
     }
 
     /** Rettangolo di un oggetto della mappa (senza lasciare attori sullo stage). */
@@ -348,7 +419,7 @@ public class LevelScreen extends BaseScreen
 
         // cronometro (si attiva dalle opzioni)
         cronometro = etichettaUi("00:00", Risorse.fontNormale, Color.WHITE);
-        cronometro.setVisible(Opzioni.cronometro);
+        cronometro.setVisible(Opzioni.cronometro || StatoPartita.difficile);
 
         // artefatto in basso a destra (luminoso nel passato)
         iconaArtefatto = new Image(Risorse.artefattoSpento);
@@ -358,7 +429,7 @@ public class LevelScreen extends BaseScreen
         iconaArtefatto.setTouchable(Touchable.disabled);
         iconaArtefatto.setVisible(hasArtifact);
         uiStage.addActor(iconaArtefatto);
-        tastoT = etichettaUi("[T] TEMPO", Risorse.fontPiccolo, oro);
+        tastoT = etichettaUi(testoTastoT(), Risorse.fontPiccolo, oro);
         tastoT.setPosition(LARGHEZZA - 56 - 18 - tastoT.getWidth(), 28);
         tastoT.setVisible(hasArtifact && mappaPassato != null);
 
@@ -475,6 +546,11 @@ public class LevelScreen extends BaseScreen
         sabbia = new TransizioneSabbia(uiStage);
     }
 
+    private String testoTastoT()
+    {
+        return viaggiRimasti >= 0 ? "[T] TEMPO x" + viaggiRimasti : "[T] TEMPO";
+    }
+
     private void aggiornaHudScarabei()
     {
         hudScarabei.setText(StatoPartita.scarabei.size() + "/" + Risorse.totaleScarabei);
@@ -570,6 +646,14 @@ public class LevelScreen extends BaseScreen
             lucePassato.setVisible(passato);
         }
         for (Scarabeo s : scarabei) s.img.setVisible(s.passato == passato);
+        for (Crollo c : crolli) {
+            c.grafica.setVisible(c.passato == passato);
+            c.solido.setEnable(c.passato == passato && !c.isCaduta());
+        }
+        for (PiattaformaMobile m : mobili) m.img.setVisible(m.passato == passato);
+        for (Leva l : leve) l.img.setVisible(l.passato == passato);
+        for (Gabbia g : gabbie) g.img.setVisible(g.passato == passato && !g.aperta);
+        suMobile = null;
         for (Tavoletta t : tavolette) t.img.setVisible(!passato);
 
         vignetta.clearActions();
@@ -594,6 +678,12 @@ public class LevelScreen extends BaseScreen
     private void viaggiaNelTempo()
     {
         if (!hasArtifact || mappaPassato == null || cooldownTempo > 0) return;
+        if (viaggiRimasti == 0) {
+            Risorse.suona(Risorse.sBloccato);
+            cooldownTempo = 0.3f;
+            mostraMessaggio("Viaggi finiti! Ricomincia il livello dal menu di pausa", 2.5f);
+            return;
+        }
         boolean destinazione = !isInPassato;
 
         // se nell'altra epoca qui c'è un muro, il viaggio è bloccato
@@ -616,6 +706,12 @@ public class LevelScreen extends BaseScreen
         cooldownTempo = 0.45f;
         tremolio = 4f;
         Risorse.suona(Risorse.sTempo);
+        if (viaggiRimasti > 0) {
+            viaggiRimasti--;
+            tastoT.setText(testoTastoT());
+            tastoT.pack();
+            tastoT.setPosition(LARGHEZZA - 56 - 18 - tastoT.getWidth(), 28);
+        }
         lampo(destinazione ? new Color(0.6f, 0.85f, 1f, 1f) : new Color(1f, 0.85f, 0.5f, 1f), 0.45f, 0.4f);
         iconaArtefatto.clearActions();
         iconaArtefatto.setScale(1f);
@@ -663,7 +759,7 @@ public class LevelScreen extends BaseScreen
     {
         Rectangle hb = esploratore.getHitbox(2f);
         for (Oggetto o : (passato ? solidiPassato : solidiPresente))
-            if (hb.overlaps(o.getRettangolo()))
+            if (!o.crollato && hb.overlaps(o.getRettangolo()))
                 return true;
         return false;
     }
@@ -689,8 +785,10 @@ public class LevelScreen extends BaseScreen
     public void update(float dt)
     {
         tempoAnimazione += dt;
-        if (!pausa && !gameOver && !transizione)
+        if (!pausa && !gameOver && !transizione) {
             StatoPartita.tempo += dt;
+            StatoPartita.tempoLivello += dt;
+        }
         cooldownTempo -= dt;
         if (cronometro.isVisible()) {
             cronometro.setText(StatoPartita.tempoFormattato());
@@ -718,20 +816,32 @@ public class LevelScreen extends BaseScreen
 
         List<Oggetto> solidi = isInPassato ? solidiPassato : solidiPresente;
 
+        // le piattaforme mobili si spostano e portano con sé chi ci sta sopra
+        for (PiattaformaMobile m : mobili) m.aggiorna(dt);
+        if (suMobile != null) esploratore.moveBy(suMobile.deltaX, suMobile.deltaY);
+
         esploratore.leggiInput(dt);
         esploratore.applyGravity(dt);
         esploratore.moveX(dt);
         collisioni(solidi, true);
+        float piediPrima = esploratore.getPiediY();
         esploratore.moveY(dt);
         collisioni(solidi, false);
+        atterraggioMobili(piediPrima);
         esploratore.restaNelMondo();
-        if (esploratore.aggiornaStato(solidi))
+
+        appoggi.clear();
+        appoggi.addAll(solidi);
+        for (PiattaformaMobile m : mobili)
+            if (m.passato == isInPassato) appoggi.add(m.area);
+        if (esploratore.aggiornaStato(appoggi))
             Risorse.suona(Risorse.sSalto, 0.8f, MathUtils.random(0.95f, 1.05f));
         if (esploratore.isAppenaAtterrato()) {
             particelleMondo.sbuffo(esploratore.getCentroX(), esploratore.getPiediY(), SABBIA);
             suonaPasso(0.9f);
         }
         registraPosizione();
+        aggiornaCrolli(dt);
 
         // trappole dell'epoca attuale
         for (Oggetto k : (isInPassato ? trappolePassato : trappolePresente)) {
@@ -754,6 +864,82 @@ public class LevelScreen extends BaseScreen
         }
 
         aggiornaCamera(dt, false);
+    }
+
+    /** Ci si appoggia sulle piattaforme mobili solo cadendo da sopra. */
+    private void atterraggioMobili(float piediPrima)
+    {
+        suMobile = null;
+        if (esploratore.velocityVec.y > 0) return;
+        Rectangle hb = esploratore.getHitbox(0);
+        for (PiattaformaMobile m : mobili) {
+            if (m.passato != isInPassato || !m.sovrapponeX(hb)) continue;
+            float top = m.getTop();
+            float topPrima = top - m.deltaY;
+            float piedi = esploratore.getPiediY();
+            if (piediPrima >= topPrima - 2f && piedi <= top + 0.5f) {
+                esploratore.moveBy(0, top - piedi);
+                esploratore.velocityVec.y = 0;
+                suMobile = m;
+                return;
+            }
+        }
+    }
+
+    /** Le piattaforme che crollano tremano quando ci si sale sopra, poi cadono e ricompaiono. */
+    private void aggiornaCrolli(float dt)
+    {
+        Rectangle hb = esploratore.getHitbox(0);
+        Rectangle piedi = new Rectangle(hb.x + 2, esploratore.getPiediY() - 3, hb.width - 4, 5);
+        for (Crollo c : crolli) {
+            boolean qui = c.passato == isInPassato;
+            if (qui && esploratore.isATerra() && !c.isCaduta() && piedi.overlaps(c.getRettangolo())) {
+                if (c.calpesta()) {
+                    Risorse.suona(Risorse.sCrollo, 0.5f, 1.3f);
+                    Rectangle r = c.getRettangolo();
+                    particelleMondo.sbuffo(r.x + r.width / 2f, r.y + r.height, SABBIA);
+                }
+            }
+            boolean occupato = hb.overlaps(c.getRettangolo());
+            if (c.aggiorna(dt, qui, occupato) && qui) {
+                Risorse.suona(Risorse.sCrollo);
+                Rectangle r = c.getRettangolo();
+                for (int i = 0; i < 4; i++)
+                    particelleMondo.esplosione(r.x + r.width * (i + 0.5f) / 4f, r.y + r.height / 2f, 5,
+                            new Color(0.7f, 0.6f, 0.45f, 0.9f), 60f, 0.7f, 250f);
+            }
+        }
+    }
+
+    private void tiraLeva(Leva l)
+    {
+        l.tirata = true;
+        l.img.setDrawable(new TextureRegionDrawable(new TextureRegion(Risorse.leva2)));
+        Risorse.suona(Risorse.sLeva);
+        tremolio = 2f;
+        particelleMondo.esplosione(l.area.getX() + l.area.getWidth() / 2f, l.area.getY() + l.area.getHeight() * 0.7f,
+                10, ORO, 70f, 0.5f, 120f);
+        boolean altraEpoca = false;
+        for (final Gabbia g : gabbie) {
+            if (g.aperta) continue;
+            g.aperta = true;
+            if (g.passato != l.passato) altraEpoca = true;
+            g.img.clearActions();
+            g.img.addAction(Actions.sequence(Actions.delay(0.3f), Actions.run(new Runnable() {
+                public void run() { Risorse.suona(Risorse.sCancello); }
+            }), Actions.parallel(Actions.moveBy(0, 50, 0.8f, Interpolation.pow2In), Actions.fadeOut(0.8f)),
+                    Actions.visible(false)));
+        }
+        mostraMessaggio(altraEpoca ? "Hai sentito un cancello aprirsi... in un'altra epoca!" : "Un cancello si e' aperto!", 3f);
+        Trofei.sblocca("ingegnere", uiStage);
+    }
+
+    private boolean inGabbia(Scarabeo s)
+    {
+        for (Gabbia g : gabbie)
+            if (!g.aperta && g.passato == s.passato && g.area.overlaps(s.area))
+                return true;
+        return false;
     }
 
     private void registraPosizione()
@@ -847,7 +1033,7 @@ public class LevelScreen extends BaseScreen
     {
         for (int i = scarabei.size() - 1; i >= 0; i--) {
             Scarabeo s = scarabei.get(i);
-            if (s.passato != isInPassato || !esploratore.overlaps(s.area)) continue;
+            if (s.passato != isInPassato || !esploratore.overlaps(s.area) || inGabbia(s)) continue;
             StatoPartita.scarabei.add(s.id);
             Risorse.suona(Risorse.sMoneta);
             particelleMondo.esplosione(s.img.getX() + s.img.getWidth() / 2f, s.img.getY() + s.img.getHeight() / 2f,
@@ -924,6 +1110,7 @@ public class LevelScreen extends BaseScreen
         Actor bersaglio = null;
         String testo = "";
         tavolettaVicina = null;
+        levaVicina = null;
 
         Oggetto u = uscitaAttiva();
         if (u != null && esploratore.overlaps(u)) {
@@ -941,6 +1128,17 @@ public class LevelScreen extends BaseScreen
                     tavolettaVicina = t;
                     bersaglio = t.area;
                     testo = "[E] LEGGI";
+                    break;
+                }
+            }
+        }
+
+        if (bersaglio == null) {
+            for (Leva l : leve) {
+                if (l.passato == isInPassato && !l.tirata && esploratore.overlaps(l.area)) {
+                    levaVicina = l;
+                    bersaglio = l.area;
+                    testo = "[E] TIRA LA LEVA";
                     break;
                 }
             }
@@ -969,8 +1167,12 @@ public class LevelScreen extends BaseScreen
             mostraCutscene();
             return;
         }
-        if (tavolettaVicina != null)
+        if (tavolettaVicina != null) {
             apriTavoletta(tavolettaVicina);
+            return;
+        }
+        if (levaVicina != null)
+            tiraLeva(levaVicina);
     }
 
     private void apriTavoletta(Tavoletta t)
@@ -1144,6 +1346,8 @@ public class LevelScreen extends BaseScreen
             Trofei.sblocca("primo_passo", uiStage);
         if (livello >= 3 && StatoPartita.mortiNelLivello == 0)
             Trofei.sblocca("intoccabile", uiStage);
+        Save.aggiornaTempoLivello(livello, StatoPartita.tempoLivello);
+        Save.registraLivello(livello + 1);
         final int prossimo = livello + 1;
         final boolean artefatto = hasArtifact;
         final boolean passato = isInPassato;
@@ -1167,6 +1371,7 @@ public class LevelScreen extends BaseScreen
         etichettaInterazione.setVisible(false);
         Risorse.suona(Risorse.sForziere);
         tremolio = 5f;
+        Save.aggiornaTempoLivello(livello, StatoPartita.tempoLivello);
         Save.cancella();
         Oggetto u = uscitaAttiva();
         float cx = u != null ? u.getX() + u.getWidth() / 2f : esploratore.getCentroX();

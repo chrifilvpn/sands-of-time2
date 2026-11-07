@@ -10,7 +10,10 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import java.util.ArrayList;
 
@@ -156,6 +159,35 @@ public class TilemapActor extends Actor
     {
         MapProperties p = tiledMap.getProperties();
         return (Integer) p.get("tileheight") * (Integer) p.get("height");
+    }
+
+    /**
+     * "Ritaglia" dalla mappa i tile disegnati dentro il rettangolo (nell'ultimo livello di tile)
+     * e li restituisce come gruppo di immagini che si può muovere (usato per le piattaforme che crollano).
+     * I tile vengono tolti dalla mappa, così non restano disegnati due volte.
+     */
+    public Group ritagliaTile(Rectangle r)
+    {
+        TiledMapTileLayer layer = null;
+        for (MapLayer l : tiledMap.getLayers())
+            if (l instanceof TiledMapTileLayer) layer = (TiledMapTileLayer) l;
+        Group g = new Group();
+        g.setPosition(r.x, r.y);
+        if (layer == null) return g;
+        float tw = layer.getTileWidth(), th = layer.getTileHeight();
+        int x0 = (int) Math.floor(r.x / tw), x1 = (int) Math.ceil((r.x + r.width) / tw) - 1;
+        int y0 = (int) Math.floor(r.y / th), y1 = (int) Math.ceil((r.y + r.height) / th) - 1;
+        for (int x = x0; x <= x1; x++) {
+            for (int y = y0; y <= y1; y++) {
+                TiledMapTileLayer.Cell cella = layer.getCell(x, y);
+                if (cella == null || cella.getTile() == null) continue;
+                Image img = new Image(cella.getTile().getTextureRegion());
+                img.setBounds(x * tw - r.x, y * th - r.y, tw, th);
+                g.addActor(img);
+                layer.setCell(x, y, null);
+            }
+        }
+        return g;
     }
 
     public TiledMap getTiledMap()

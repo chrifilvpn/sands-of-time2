@@ -68,6 +68,7 @@ public class FineScreen extends BaseScreen
         if (StatoPartita.tempo < 15 * 60) Trofei.sblocca("velocista", uiStage);
         if (StatoPartita.morti <= 5)      Trofei.sblocca("immortale", uiStage);
         if (presi >= Risorse.totaleScarabei) Trofei.sblocca("collezionista", uiStage);
+        if (StatoPartita.difficile)       Trofei.sblocca("maestro", uiStage);
 
         Risorse.attutisci(false);
         Risorse.musica(false);

@@ -30,7 +30,47 @@ public class Save
         p.putInteger(KEY_MORTI, morti);
         p.putFloat(KEY_TEMPO, tempo);
         p.putString(KEY_SCARABEI, StatoPartita.scarabeiComeTesto());
+        p.putBoolean("difficile", StatoPartita.difficile);
         p.flush();
+    }
+
+    public static boolean caricaDifficile()
+    {
+        return prefs().getBoolean("difficile", false);
+    }
+
+    // ---------------- livelli sbloccati e miglior tempo per livello ----------------
+
+    /** Il livello più avanzato mai raggiunto (per la selezione dei livelli). */
+    public static int livelloMassimo()
+    {
+        return Math.max(1, Gdx.app.getPreferences(RECORD).getInteger("livelloMassimo", 1));
+    }
+
+    public static void registraLivello(int livello)
+    {
+        if (livello > Risorse.numeroLivelli) return;
+        if (livello > livelloMassimo()) {
+            Preferences p = Gdx.app.getPreferences(RECORD);
+            p.putInteger("livelloMassimo", livello);
+            p.flush();
+        }
+    }
+
+    /** Miglior tempo di un livello in secondi, 0 se mai completato. */
+    public static float tempoLivello(int livello)
+    {
+        return Gdx.app.getPreferences(RECORD).getFloat("tempo_" + livello, 0f);
+    }
+
+    public static void aggiornaTempoLivello(int livello, float tempo)
+    {
+        float vecchio = tempoLivello(livello);
+        if (tempo > 0 && (vecchio == 0f || tempo < vecchio)) {
+            Preferences p = Gdx.app.getPreferences(RECORD);
+            p.putFloat("tempo_" + livello, tempo);
+            p.flush();
+        }
     }
 
     public static String caricaScarabei()

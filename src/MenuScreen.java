@@ -49,12 +49,13 @@ public class MenuScreen extends BaseScreen
         sabbiaVento.avviaAmbiente(70, LARGHEZZA, ALTEZZA, new Color(1f, 0.85f, 0.55f, 1f));
 
         boolean web = Risorse.isWeb();
-        int quanti = web ? 4 : 5;
-        float altezzaBottone = 36, spazio = 8;
+        boolean difficileSbloccata = Trofei.sbloccato("fine");
+        int quanti = 5 + (web ? 0 : 1) + (difficileSbloccata ? 1 : 0);
+        float altezzaBottone = 34, spazio = 7;
         float altezzaPannello = quanti * (altezzaBottone + spazio) + 22;
 
         Image pannello = new Image(Risorse.pannello);
-        pannello.setBounds(462, 26, 296, altezzaPannello);
+        pannello.setBounds(462, 20, 296, altezzaPannello);
         pannello.setColor(1, 1, 1, 0.9f);
         pannello.setTouchable(Touchable.disabled);
         uiStage.addActor(pannello);
@@ -63,13 +64,23 @@ public class MenuScreen extends BaseScreen
         String testoContinua = salvataggio ? "CONTINUA  (LIV. " + Save.caricaLivello() + ")" : "CONTINUA";
 
         bottoni = new ListaBottoni(uiStage);
-        float y = 26 + altezzaPannello - 11 - altezzaBottone;
+        float y = 20 + altezzaPannello - 11 - altezzaBottone;
         bottoni.aggiungi(testoContinua, 480, y, 260, altezzaBottone, new Runnable() {
             public void run() { continua(); }
         });
         y -= altezzaBottone + spazio;
         bottoni.aggiungi("NUOVA PARTITA", 480, y, 260, altezzaBottone, new Runnable() {
-            public void run() { nuovaPartita(); }
+            public void run() { nuovaPartita(false); }
+        });
+        if (difficileSbloccata) {   // si sblocca dopo aver finito il gioco una volta
+            y -= altezzaBottone + spazio;
+            bottoni.aggiungi("MODALITA' DIFFICILE", 480, y, 260, altezzaBottone, new Runnable() {
+                public void run() { nuovaPartita(true); }
+            });
+        }
+        y -= altezzaBottone + spazio;
+        bottoni.aggiungi("LIVELLI", 480, y, 260, altezzaBottone, new Runnable() {
+            public void run() { vai(new LivelliScreen()); }
         });
         y -= altezzaBottone + spazio;
         bottoni.aggiungi("TROFEI  " + Trofei.quantiSbloccati() + "/" + Trofei.ELENCO.length, 480, y, 260, altezzaBottone,
@@ -114,9 +125,10 @@ public class MenuScreen extends BaseScreen
         vai(new LevelScreen(Save.caricaLivello(), Save.caricaArtefatto(), Save.caricaPassato()));
     }
 
-    private void nuovaPartita()
+    private void nuovaPartita(boolean difficile)
     {
         StatoPartita.nuova();
+        StatoPartita.difficile = difficile;
         Save.cancella();
         vai(new LevelScreen(1, false, false));
     }

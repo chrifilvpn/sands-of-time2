@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="35">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="36">
  <properties>
   <property name="dimensionePersonaggio" type="float" value="57.6"/>
   <property name="uscita" value="tocco"/>
@@ -44,7 +44,7 @@
   <object id="2" name="solid" x="736" y="288" width="128" height="96"/>
   <object id="3" name="solid" x="672" y="352" width="64" height="32"/>
   <object id="4" name="solid" x="1088" y="288" width="128" height="96"/>
-  <object id="5" name="solid" x="960" y="480" width="64" height="32"/>
+  <object id="5" name="crollo" x="960" y="480" width="64" height="32"/>
   <object id="6" name="solid" x="896" y="576" width="32" height="96"/>
   <object id="7" name="solid" x="928" y="640" width="64" height="32"/>
   <object id="8" name="solid" x="1024" y="640" width="64" height="32"/>
@@ -107,5 +107,8 @@
     <property name="testo" value="Gli scarabei d'oro sono i passi di chi è venuto prima di te."/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup id="5" name="meccaniche">
+  <object id="35" name="gabbia" x="130" y="620" width="52" height="46"/>
  </objectgroup>
 </map>

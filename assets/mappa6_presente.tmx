@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="20">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="22">
  <properties>
   <property name="dimensionePersonaggio" type="float" value="57.6"/>
   <property name="uscita" value="tocco"/>
@@ -91,5 +91,14 @@
     <property name="testo" value="Le trappole furono poste dagli architetti per proteggere il riposo del dio."/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup id="5" name="meccaniche">
+  <object id="20" name="mobile" x="452" y="416" width="80" height="16">
+   <properties>
+    <property name="dx" type="float" value="168"/>
+    <property name="durata" type="float" value="2.4"/>
+   </properties>
+  </object>
+  <object id="21" name="gabbia" x="374" y="364" width="52" height="46"/>
  </objectgroup>
 </map>

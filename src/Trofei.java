@@ -28,6 +28,8 @@ public class Trofei
         {"fine",          "Il tesoro di Thot", "Finisci il gioco"},
         {"velocista",     "Velocista",         "Finisci in meno di 15 minuti"},
         {"immortale",     "Quasi immortale",   "Finisci con 5 morti o meno"},
+        {"ingegnere",     "Ingegnere",         "Apri una gabbia con una leva"},
+        {"maestro",       "Maestro del tempo", "Finisci in modalita' difficile"},
     };
 
     private static final String NOME = "sands_of_time_trofei";

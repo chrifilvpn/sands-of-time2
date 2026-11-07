@@ -13,6 +13,8 @@ public class Oggetto extends BaseActor
     public enum Tipo { SOLIDO, TRAPPOLA, USCITA, INTERAZIONE }
 
     private final Tipo tipo;
+    /** true se è una piattaforma crollata (temporaneamente non c'è). */
+    public boolean crollato = false;
     private boolean enable;
 
     public Oggetto(float x, float y, float width, float height, Tipo tipo, Stage stage)

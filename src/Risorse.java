@@ -35,7 +35,7 @@ public class Risorse
     public static Texture bianco;
     public static Texture vignetta;
     public static Texture artefattoSpento, artefattoAcceso, ingranaggio, sfondoMenu;
-    public static Texture luce, anello, scarabeo, tavoletta;
+    public static Texture luce, anello, scarabeo, tavoletta, piattaforma, leva1, leva2, gabbia;
     public static NinePatchDrawable bottoneNormale, bottoneSelezionato, bottoneDisabilitato, pannello;
 
     // ---------------- animazioni del personaggio (condivise) ----------------
@@ -44,6 +44,7 @@ public class Risorse
     // ---------------- audio ----------------
     public static Sound sSalto, sMorte, sTempo, sBloccato, sArtefatto, sPorta, sClick, sSeleziona, sVittoria;
     public static Sound sPassoPietra, sPassoSabbia, sGoccia, sVento, sMoneta, sTavoletta, sTrofeo, sClessidra, sForziere;
+    public static Sound sLeva, sCrollo, sCancello;
     /** Colonna sonora unica del gioco (la musica del passato), sempre la stessa. */
     public static Music musica;
     private static boolean muto = false;
@@ -101,6 +102,10 @@ public class Risorse
         anello          = BaseActor.getTexture("assets/anello.png");
         tavoletta       = BaseActor.getTexture("assets/tavoletta.png");
         scarabeo        = BaseActor.getTextureMipMap("assets/scarabeo.png");
+        piattaforma     = BaseActor.getTexture("assets/piattaforma.png");
+        leva1           = BaseActor.getTextureMipMap("assets/leva1.png");
+        leva2           = BaseActor.getTextureMipMap("assets/leva2.png");
+        gabbia          = BaseActor.getTexture("assets/gabbia.png");
 
         // ---- animazioni ----
         animIdle   = animazione("assets/Idle/Idle", 1, 4, 0.5f, true);
@@ -129,6 +134,9 @@ public class Risorse
         sTrofeo      = suono("trofeo");
         sClessidra   = suono("clessidra");
         sForziere    = suono("forziere");
+        sLeva        = suono("leva");
+        sCrollo      = suono("crollo");
+        sCancello    = suono("cancello");
 
         musica = registra(Gdx.audio.newMusic(Gdx.files.internal("assets/musica_passato.mp3")));
         musica.setLooping(true);

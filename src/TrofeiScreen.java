@@ -38,12 +38,13 @@ public class TrofeiScreen extends BaseScreen
         titolo.setPosition(Math.round(LARGHEZZA / 2f - titolo.getWidth() / 2f), 405);
         uiStage.addActor(titolo);
 
-        // due colonne da 6
+        // due colonne
+        int perColonna = (Trofei.ELENCO.length + 1) / 2;
         for (int i = 0; i < Trofei.ELENCO.length; i++) {
             String[] t = Trofei.ELENCO[i];
             boolean ok = Trofei.sbloccato(t[0]);
-            float x = (i < 6) ? 56 : 412;
-            float y = 345 - (i % 6) * 52;
+            float x = (i < perColonna) ? 56 : 412;
+            float y = 350 - (i % perColonna) * 44;
 
             Image icona = new Image(Risorse.scarabeo);
             icona.setBounds(x, y - 4, 30, 30);

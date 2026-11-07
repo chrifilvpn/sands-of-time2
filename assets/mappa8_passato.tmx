@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="29">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="30">
  <properties>
   <property name="dimensionePersonaggio" type="float" value="57.6"/>
   <property name="parallasse" type="float" value="0.75"/>
@@ -21,7 +21,7 @@
   <object id="11" name="solid" x="1056" y="192" width="32" height="128"/>
   <object id="12" name="solid" x="1024" y="288" width="192" height="32"/>
   <object id="13" name="solid" x="1088" y="224" width="128" height="64"/>
-  <object id="14" name="solid" x="1056" y="416" width="96" height="32"/>
+  <object id="14" name="crollo" x="1056" y="416" width="96" height="32"/>
   <object id="15" name="solid" x="1184" y="512" width="32" height="32"/>
   <object id="16" name="solid" x="1184" y="640" width="32" height="32"/>
   <object id="17" name="solid" x="928" y="0" width="32" height="609"/>
@@ -94,5 +94,8 @@
  </layer>
  <objectgroup id="6" name="decorazioni">
   <object id="28" name="scarabeo" x="1060" y="158" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup id="7" name="meccaniche">
+  <object id="29" name="leva" x="776" y="704" width="32" height="32"/>
  </objectgroup>
 </map>

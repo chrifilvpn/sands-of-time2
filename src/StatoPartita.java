@@ -13,9 +13,15 @@ public class StatoPartita
     /** Per il trofeo "Intoccabile": morti nel livello attuale (si azzera cambiando livello). */
     public static int livelloCorrente = 0;
     public static int mortiNelLivello = 0;
+    /** Tempo passato nel livello attuale (per il miglior tempo di ogni livello). */
+    public static float tempoLivello = 0f;
+    /** Modalità difficile: viaggi nel tempo limitati. */
+    public static boolean difficile = false;
 
     public static void nuova()
     {
+        difficile = false;
+        tempoLivello = 0f;
         morti = 0;
         tempo = 0f;
         scarabei.clear();
@@ -34,6 +40,8 @@ public class StatoPartita
                 scarabei.add(id);
         livelloCorrente = 0;
         mortiNelLivello = 0;
+        tempoLivello = 0f;
+        difficile = Save.caricaDifficile();
     }
 
     public static String scarabeiComeTesto()

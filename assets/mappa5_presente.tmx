@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="26">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="28">
  <properties>
   <property name="dimensionePersonaggio" type="float" value="57.6"/>
   <property name="uscita" value="tocco"/>
@@ -100,5 +100,14 @@
     <property name="testo" value="Molti ladri entrarono. Nessuno capì che i muri di oggi erano le porte di ieri."/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup id="5" name="meccaniche">
+  <object id="26" name="mobile" x="612" y="640" width="80" height="16">
+   <properties>
+    <property name="dx" type="float" value="200"/>
+    <property name="durata" type="float" value="2.9"/>
+   </properties>
+  </object>
+  <object id="27" name="gabbia" x="886" y="172" width="52" height="46"/>
  </objectgroup>
 </map>
