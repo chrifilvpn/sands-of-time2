@@ -70,7 +70,7 @@ assets/
   mappaN_presente.tmx / mappaN_passato.tmx        i livelli (Tiled)
   suoni/                                          effetti sonori
 extra/assets_non_usati/                           file non usati dal gioco (bozze, vecchie versioni)
-extra/personaggio_nuovo/                          un esploratore alternativo in pixel art 64x64 (non usato)
+extra/personaggio_vecchio/                        gli sprite del personaggio originale
 ```
 
 ## Creare o modificare un livello (Tiled)
@@ -96,8 +96,8 @@ Proprietà della mappa del presente (*Mappa → Proprietà mappa*):
 ## Novità di Sands of Time 2
 
 **Personaggio e livello finale**
-- Il personaggio è quello originale. In `extra/personaggio_nuovo` c'è una versione alternativa ridisegnata, non usata: per provarla basta copiarne le cartelle in `assets/`.
-- Le immagini del personaggio usano le *mipmap*, così restano più pulite quando sono rimpicciolite.
+- Esploratore ridisegnato da zero in pixel art (64×64): stesso concept (casco, zaino verde, pantaloncini) con più dettagli e un fazzoletto rosso. Animazioni nuove per fermo, corsa, salita, discesa e morte. Il cappello rotola via quando muore.
+- Le immagini usano le *mipmap*: il personaggio resta nitido a qualsiasi dimensione.
 - Livello 12: il personaggio non è più enorme (128 px invece di 205). Aprire il forziere ora scatena un bagliore che cresce, una pioggia di monete d'oro e un lampo dorato prima del finale.
 
 **Effetti visivi**

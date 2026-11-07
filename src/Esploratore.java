@@ -33,9 +33,9 @@ public class Esploratore extends BaseActor
     private static final float TAGLIO_SALTO = 0.45f;  // velocità mantenuta se si lascia il tasto
 
     // posizione del personaggio dentro l'immagine (in proporzione): servono per la hitbox
-    private static final float PIEDI = 0.13f;
-    private static final float TESTA = 0.86f;
-    private static final float LATO  = 0.31f;
+    private static final float PIEDI = 0.065f;
+    private static final float TESTA = 0.82f;
+    private static final float LATO  = 0.32f;
 
     private final Animation<TextureRegion> idle, walk, salita, caduta, death;
     private final BaseActor sensoreSotto;
