@@ -18,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 public class MenuScreen extends BaseScreen
 {
     /** Area del titolo dentro lo sfondo (in coordinate dello schermo). */
-    private static final Rectangle AREA_TITOLO = new Rectangle(170, 300, 460, 170);
+    private static final Rectangle AREA_TITOLO = new Rectangle(8, 318, 170, 160);
 
     private ListaBottoni bottoni;
     private TransizioneSabbia sabbia;

@@ -22,13 +22,13 @@ public class Trofei
         {"curioso",       "Occhio del tempo",  "Usa la visione temporale"},
         {"viaggiatore",   "Viaggiatore",       "Viaggia nel tempo 50 volte"},
         {"scarabeo",      "Primo scarabeo",    "Raccogli uno scarabeo d'oro"},
-        {"collezionista", "Collezionista",     "Raccogli tutti gli scarabei in una partita"},
+        {"collezionista", "Collezionista",     "Ogni scarabeo in una partita"},
         {"archeologo",    "Archeologo",        "Leggi tutte le tavolette"},
-        {"intoccabile",   "Intoccabile",       "Finisci un livello dal 3 in poi senza morire"},
+        {"intoccabile",   "Intoccabile",       "Un livello (dal 3) senza morire"},
         {"testardo",      "Testardo",          "Muori 25 volte"},
         {"fine",          "Il tesoro di Thot", "Finisci il gioco"},
-        {"velocista",     "Velocista",         "Finisci il gioco in meno di 15 minuti"},
-        {"immortale",     "Quasi immortale",   "Finisci il gioco con 5 morti o meno"},
+        {"velocista",     "Velocista",         "Finisci in meno di 15 minuti"},
+        {"immortale",     "Quasi immortale",   "Finisci con 5 morti o meno"},
     };
 
     private static final String NOME = "sands_of_time_trofei";
