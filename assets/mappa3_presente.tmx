@@ -98,6 +98,6 @@
   <object id="18" name="torcia" x="1184" y="182" width="4" height="4"/>
  </objectgroup>
  <objectgroup id="7" name="meccaniche">
-  <object id="19" name="gabbia" x="1042" y="380" width="52" height="46"/>
+  <object id="19" name="gabbia" x="1042" y="380" width="52" height="52"/>
  </objectgroup>
 </map>

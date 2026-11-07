@@ -109,6 +109,6 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="meccaniche">
-  <object id="35" name="gabbia" x="130" y="620" width="52" height="46"/>
+  <object id="35" name="gabbia" x="130" y="620" width="52" height="52"/>
  </objectgroup>
 </map>

@@ -1144,6 +1144,16 @@ public class LevelScreen extends BaseScreen
             }
         }
 
+        if (bersaglio == null) {
+            for (Gabbia g : gabbie) {
+                if (g.passato == isInPassato && !g.aperta && esploratore.overlaps(g.area)) {
+                    bersaglio = g.area;
+                    testo = leve.isEmpty() ? "GABBIA CHIUSA" : "GABBIA CHIUSA: CERCA LA LEVA";
+                    break;
+                }
+            }
+        }
+
         etichettaInterazione.setVisible(bersaglio != null);
         if (bersaglio != null) {
             etichettaInterazione.setText(testo);

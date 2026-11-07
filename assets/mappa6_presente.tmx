@@ -99,6 +99,6 @@
     <property name="durata" type="float" value="2.4"/>
    </properties>
   </object>
-  <object id="21" name="gabbia" x="374" y="364" width="52" height="46"/>
+  <object id="21" name="gabbia" x="374" y="364" width="52" height="52"/>
  </objectgroup>
 </map>

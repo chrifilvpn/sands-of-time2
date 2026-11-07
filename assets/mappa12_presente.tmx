@@ -85,7 +85,7 @@
   </object>
   <object id="8" name="scarabeo" x="292" y="468" width="24" height="24"/>
   <object id="9" name="scarabeo" x="772" y="414" width="24" height="24"/>
-  <object id="10" name="gabbia" x="758" y="396" width="52" height="46"/>
+  <object id="10" name="gabbia" x="758" y="396" width="52" height="52"/>
   <object id="11" name="geroglifico" x="128" y="568" width="32" height="40">
    <properties>
     <property name="testo" value="Il ponte crollo' il giorno in cui Thot chiuse la sua stanza. Solo il passato ricorda la strada."/>
