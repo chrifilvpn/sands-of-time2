@@ -19,7 +19,6 @@ public class Trofei
         // id, nome, descrizione
         {"primo_passo",   "Primo passo",       "Entra nella piramide"},
         {"artefatto",     "Il dono di Thot",   "Trova l'artefatto del tempo"},
-        {"curioso",       "Occhio del tempo",  "Usa la visione temporale"},
         {"viaggiatore",   "Viaggiatore",       "Viaggia nel tempo 50 volte"},
         {"scarabeo",      "Primo scarabeo",    "Raccogli uno scarabeo d'oro"},
         {"collezionista", "Collezionista",     "Ogni scarabeo in una partita"},

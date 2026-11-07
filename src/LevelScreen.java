@@ -60,7 +60,6 @@ public class LevelScreen extends BaseScreen
     private float tempoAnimazione = 0f;
     private float camX, camY;
     private String tipoUscita, ambiente;
-    private boolean visioneUsata = false;
 
     // ------------------------------------------------ mondo
     private TilemapActor mappaPresente, mappaPassato;
@@ -74,7 +73,6 @@ public class LevelScreen extends BaseScreen
     private Oggetto uscitaPresente, uscitaPassato, oggettoArtefatto;
     private Label etichettaInterazione;
     private Particelle particelleMondo, polvere;
-    private VisioneTemporale visione;
     private float timerScintille = 0f, timerPasso = 0f, timerGocce = 3f, timerSabbia = 2f;
     private float sabbiaRestante = 0f, sabbiaX, sabbiaY, sabbiaMinY, timerGranello = 0f;
 
@@ -103,7 +101,7 @@ public class LevelScreen extends BaseScreen
     private Image vignetta, flash;
     private TransizioneSabbia sabbia;
     private Image iconaArtefatto, iconaScarabeo;
-    private Label tastoT, tastoQ, hudLivello, hudEpoca, hudScarabei, cronometro;
+    private Label tastoT, hudLivello, hudEpoca, hudScarabei, cronometro;
     private Label messaggio, titoloLivello, sottotitoloLivello;
     private Image ingranaggio;
 
@@ -197,7 +195,6 @@ public class LevelScreen extends BaseScreen
 
         particelleMondo = new Particelle(mainStage);
         luciEffetti = new Luci(mainStage);
-        visione = new VisioneTemporale(mainStage);
 
         etichettaInterazione = Risorse.etichetta("", Risorse.fontPiccolo, new Color(1f, 0.9f, 0.3f, 1f));
         etichettaInterazione.setVisible(false);
@@ -362,12 +359,8 @@ public class LevelScreen extends BaseScreen
         iconaArtefatto.setVisible(hasArtifact);
         uiStage.addActor(iconaArtefatto);
         tastoT = etichettaUi("[T] TEMPO", Risorse.fontPiccolo, oro);
-        tastoT.setPosition(LARGHEZZA - 56 - 18 - tastoT.getWidth(), 36);
-        tastoQ = etichettaUi("[Q] VISIONE", Risorse.fontPiccolo, new Color(0.7f, 0.9f, 1f, 1f));
-        tastoQ.setPosition(LARGHEZZA - 56 - 18 - tastoQ.getWidth(), 20);
-        boolean puoViaggiare = hasArtifact && mappaPassato != null;
-        tastoT.setVisible(puoViaggiare);
-        tastoQ.setVisible(puoViaggiare);
+        tastoT.setPosition(LARGHEZZA - 56 - 18 - tastoT.getWidth(), 28);
+        tastoT.setVisible(hasArtifact && mappaPassato != null);
 
         // ingranaggio (pausa) in alto a destra
         ingranaggio = new Image(Risorse.ingranaggio);
@@ -451,7 +444,6 @@ public class LevelScreen extends BaseScreen
                 {"SPAZIO / W", "salta"},
                 {"E", "interagisci / leggi"},
                 {"T", "viaggia nel tempo"},
-                {"Q (tieni)", "visione temporale"},
                 {"ESC / P", "pausa"},
                 {"M", "audio on/off"},
                 {"F11", "schermo intero"}
@@ -581,10 +573,6 @@ public class LevelScreen extends BaseScreen
         for (Scarabeo s : scarabei) s.img.setVisible(s.passato == passato);
         for (Tavoletta t : tavolette) t.img.setVisible(!passato);
 
-        // la visione temporale mostra sempre l'ALTRA epoca
-        if (passato) visione.imposta(solidiPresente, trappolePresente, uscitaPresente, false);
-        else         visione.imposta(solidiPassato, trappolePassato, uscitaPassato, true);
-
         vignetta.clearActions();
         if (passato) {
             vignetta.setVisible(true);
@@ -615,7 +603,7 @@ public class LevelScreen extends BaseScreen
             lampo(new Color(1f, 0.2f, 0.1f, 1f), 0.35f, 0.25f);
             tremolio = 3f;
             cooldownTempo = 0.3f;
-            mostraMessaggio("Qualcosa ti blocca nell'altra epoca!  (Q per vedere)", 2f);
+            mostraMessaggio("Qualcosa ti blocca nell'altra epoca!", 2f);
             return;
         }
 
@@ -725,7 +713,6 @@ public class LevelScreen extends BaseScreen
         }
 
         if (pausa || cutscene || lettura || transizione || gameOver) {
-            visione.setAttiva(false);
             aggiornaCamera(dt, false);
             return;
         }
@@ -757,7 +744,6 @@ public class LevelScreen extends BaseScreen
 
         raccogliScarabei();
         aggiornaInterazione();
-        aggiornaVisione();
         aggiornaAmbiente(dt);
         emettiScintille(dt);
 
@@ -882,17 +868,6 @@ public class LevelScreen extends BaseScreen
             Trofei.sblocca("scarabeo", uiStage);
             if (StatoPartita.scarabei.size() >= Risorse.totaleScarabei)
                 Trofei.sblocca("collezionista", uiStage);
-        }
-    }
-
-    private void aggiornaVisione()
-    {
-        boolean premuto = hasArtifact && mappaPassato != null
-                && (Gdx.input.isKeyPressed(Input.Keys.Q) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
-        visione.setAttiva(premuto);
-        if (premuto && !visioneUsata) {
-            visioneUsata = true;
-            Trofei.sblocca("curioso", uiStage);
         }
     }
 
@@ -1108,8 +1083,7 @@ public class LevelScreen extends BaseScreen
         iconaArtefatto.setScale(0f);
         iconaArtefatto.addAction(Actions.scaleTo(1f, 1f, 0.4f));
         tastoT.setVisible(mappaPassato != null);
-        tastoQ.setVisible(mappaPassato != null);
-        mostraMessaggio("T = viaggia nel tempo    Q = sbircia l'altra epoca", 6f);
+        mostraMessaggio("Premi T per viaggiare nel tempo", 5f);
         Trofei.sblocca("artefatto", uiStage);
         Save.salva(livello, true, isInPassato, StatoPartita.morti, StatoPartita.tempo);
     }
@@ -1118,7 +1092,6 @@ public class LevelScreen extends BaseScreen
     {
         esploratore.morte();
         etichettaInterazione.setVisible(false);
-        visione.setAttiva(false);
         StatoPartita.morti++;
         StatoPartita.mortiNelLivello++;
         Risorse.attutisci(true);
@@ -1150,7 +1123,6 @@ public class LevelScreen extends BaseScreen
     {
         if (transizione) return;
         etichettaInterazione.setVisible(false);
-        visione.setAttiva(false);
         Risorse.suona(Risorse.sPorta);
         if (livello == 1)
             Trofei.sblocca("primo_passo", uiStage);
@@ -1247,7 +1219,6 @@ public class LevelScreen extends BaseScreen
     {
         pausa = !pausa;
         mostraPausa(pausa);
-        visione.setAttiva(false);
         // la musica non si ferma: si abbassa ("attutita") e risale quando si riprende
         Risorse.attutisci(pausa);
     }

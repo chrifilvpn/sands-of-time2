@@ -13,7 +13,6 @@ Un esploratore entra in una piramide e, grazie a un artefatto misterioso, può v
 | SPAZIO, W o FRECCIA SU | saltare (tieni premuto per saltare più in alto) |
 | E | interagire (porte, bara, tesoro) |
 | T | viaggiare nel tempo (dopo aver trovato l'artefatto) |
-| Q o SHIFT (tieni premuto) | visione temporale: vedi muri e trappole dell'altra epoca |
 | ESC o P | pausa |
 | M | audio on/off |
 | F11 | schermo intero |
@@ -118,8 +117,7 @@ Proprietà della mappa del presente (*Mappa → Proprietà mappa*):
 **Gameplay**
 - **33 scarabei d'oro** da raccogliere, alcuni solo nel passato. Contatore nell'HUD.
 - **10 tavolette con geroglifici** (livelli 2–11): premi E per leggere un pezzo della storia di Thot.
-- **Visione temporale** (Q): mostra in trasparenza muri, trappole e uscita dell'altra epoca.
-- **12 trofei**, consultabili dal menu (TROFEI), con notifica quando li sblocchi.
+- **11 trofei**, consultabili dal menu (TROFEI), con notifica quando li sblocchi.
 
 **Audio**
 - Passi diversi su sabbia e su pietra, gocce d'acqua lontane nella piramide, vento nel deserto.
