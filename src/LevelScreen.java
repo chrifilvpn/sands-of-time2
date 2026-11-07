@@ -419,7 +419,6 @@ public class LevelScreen extends BaseScreen
         letTitolo = etichettaUi("TAVOLETTA ANTICA", Risorse.fontNormale, oro);
         centra(letTitolo, 278);
         letTesto = etichettaUi("", Risorse.fontNormale, new Color(0.95f, 0.9f, 0.8f, 1f));
-        letTesto.setWrap(true);
         letTesto.setAlignment(Align.center);
         letSotto = etichettaUi("Premi E per chiudere", Risorse.fontPiccolo, new Color(1f, 1f, 1f, 0.7f));
         centra(letSotto, 148);
@@ -979,15 +978,32 @@ public class LevelScreen extends BaseScreen
         lettura = true;
         etichettaInterazione.setVisible(false);
         Risorse.suona(Risorse.sTavoletta);
-        letTesto.setText("\"" + t.testo + "\"");
-        letTesto.setWidth(500);
-        letTesto.layout();
-        letTesto.setHeight(letTesto.getPrefHeight());
-        letTesto.setPosition(LARGHEZZA / 2f - 250, 230 - letTesto.getHeight() / 2f);
+        // a capo calcolato una volta sola (l'a capo automatico di libGDX faceva tremare il testo)
+        letTesto.setText(aCapo("\"" + t.testo + "\"", 40));
+        letTesto.pack();
+        letTesto.setPosition(Math.round(LARGHEZZA / 2f - letTesto.getWidth() / 2f),
+                Math.round(230 - letTesto.getHeight() / 2f));
         mostraLettura(true);
         int lette = Trofei.segnaTavoletta(t.id);
         if (lette >= Risorse.totaleTavolette)
             Trofei.sblocca("archeologo", uiStage);
+    }
+
+    /** Divide un testo in righe di al massimo "max" caratteri, senza spezzare le parole. */
+    private static String aCapo(String testo, int max)
+    {
+        StringBuilder risultato = new StringBuilder();
+        StringBuilder riga = new StringBuilder();
+        for (String parola : testo.split(" ")) {
+            if (riga.length() > 0 && riga.length() + 1 + parola.length() > max) {
+                risultato.append(riga).append('\n');
+                riga.setLength(0);
+            }
+            if (riga.length() > 0) riga.append(' ');
+            riga.append(parola);
+        }
+        risultato.append(riga);
+        return risultato.toString();
     }
 
     private void chiudiTavoletta()
