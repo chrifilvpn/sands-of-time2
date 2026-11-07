@@ -93,12 +93,6 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="meccaniche">
-  <object id="20" name="mobile" x="452" y="416" width="80" height="16">
-   <properties>
-    <property name="dx" type="float" value="168"/>
-    <property name="durata" type="float" value="2.4"/>
-   </properties>
-  </object>
   <object id="21" name="gabbia" x="374" y="364" width="52" height="52"/>
  </objectgroup>
 </map>

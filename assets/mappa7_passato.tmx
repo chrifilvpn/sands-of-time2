@@ -92,12 +92,6 @@
   <object id="20" name="scarabeo" x="260" y="254" width="24" height="24"/>
  </objectgroup>
  <objectgroup id="5" name="meccaniche">
-  <object id="21" name="mobile" x="804" y="640" width="80" height="16">
-   <properties>
-    <property name="dx" type="float" value="136"/>
-    <property name="durata" type="float" value="1.9"/>
-   </properties>
-  </object>
   <object id="22" name="leva" x="904" y="224" width="32" height="32"/>
  </objectgroup>
 </map>

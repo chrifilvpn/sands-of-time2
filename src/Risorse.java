@@ -39,7 +39,7 @@ public class Risorse
     public static NinePatchDrawable bottoneNormale, bottoneSelezionato, bottoneDisabilitato, pannello;
 
     // ---------------- animazioni del personaggio (condivise) ----------------
-    public static Animation<TextureRegion> animIdle, animCorsa, animSalita, animCaduta, animMorte;
+    public static Animation<TextureRegion> animIdle, animCorsa, animSalita, animApice, animCaduta, animAtterraggio, animMorte;
 
     // ---------------- audio ----------------
     public static Sound sSalto, sMorte, sTempo, sBloccato, sArtefatto, sPorta, sClick, sSeleziona, sVittoria;
@@ -110,9 +110,11 @@ public class Risorse
         // ---- animazioni ----
         animIdle   = animazione("assets/Idle/Idle", 1, 4, 0.5f, true);
         animCorsa  = animazione("assets/Run/run", 1, 6, 0.09f, true);
-        // personaggio originale: un'unica animazione di salto, usata sia in salita sia in discesa
-        animSalita = animazione("assets/Jump/jump", 1, 8, 0.1f, true);
-        animCaduta = animSalita;
+        // salto diviso in fasi: stacco e salita (1-3), punto più alto (4), discesa (5-6), atterraggio (7-8)
+        animSalita      = animazione("assets/Jump/jump", 1, 3, 0.07f, false);
+        animApice       = animazione("assets/Jump/jump", 4, 4, 0.1f, false);
+        animCaduta      = animazione("assets/Jump/jump", 5, 6, 0.1f, false);
+        animAtterraggio = animazione("assets/Jump/jump", 7, 8, 0.06f, false);
         animMorte  = animazione("assets/Death/death", 1, 7, 0.12f, false);
 
         // ---- audio ----

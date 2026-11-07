@@ -37,7 +37,8 @@ public class Esploratore extends BaseActor
     private static final float TESTA = 0.86f;
     private static final float LATO  = 0.31f;
 
-    private final Animation<TextureRegion> idle, walk, salita, caduta, death;
+    private final Animation<TextureRegion> idle, walk, salita, apice, caduta, atterraggio, death;
+    private float timerAtterraggio = 0f;
     private final BaseActor sensoreSotto;
     private final float dimensione;
 
@@ -64,7 +65,9 @@ public class Esploratore extends BaseActor
         idle  = Risorse.animIdle;
         walk  = Risorse.animCorsa;
         salita = Risorse.animSalita;
+        apice = Risorse.animApice;
         caduta = Risorse.animCaduta;
+        atterraggio = Risorse.animAtterraggio;
         death = Risorse.animMorte;
         setAnimation(idle);
 
@@ -143,6 +146,7 @@ public class Esploratore extends BaseActor
             float forza = Math.min(1f, velocitaCaduta / VEL_MAX_Y);
             scalaX = 1f + 0.28f * forza;
             scalaY = 1f - 0.24f * forza;
+            timerAtterraggio = 0.12f;   // breve posa di atterraggio
         }
         if (!aTerra) velocitaCaduta = Math.max(0, -velocityVec.y);
 
@@ -157,8 +161,16 @@ public class Esploratore extends BaseActor
             scalaY = 1.22f;
         }
 
-        if (aTerra) setAnimation(velocityVec.x == 0 ? idle : walk);
-        else        setAnimation(velocityVec.y > 0 ? salita : caduta);
+        if (salto) timerAtterraggio = 0;
+        if (aTerra) {
+            if (timerAtterraggio > 0 && velocityVec.x == 0) setAnimation(atterraggio);
+            else setAnimation(velocityVec.x == 0 ? idle : walk);
+        } else {
+            // la posa dipende da quanto velocemente sale o scende
+            if (velocityVec.y > 140)       setAnimation(salita);
+            else if (velocityVec.y > -140) setAnimation(apice);
+            else                           setAnimation(caduta);
+        }
         return salto;
     }
 
@@ -282,6 +294,7 @@ public class Esploratore extends BaseActor
     {
         super.act(dt);
         if (morto) timerMorte += dt;
+        timerAtterraggio -= dt;
         // la deformazione torna piano piano normale
         float k = Math.min(1f, dt * 12f);
         scalaX += (1f - scalaX) * k;

@@ -105,12 +105,6 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="meccaniche">
-  <object id="28" name="mobile" x="132" y="544" width="80" height="16">
-   <properties>
-    <property name="dx" type="float" value="136"/>
-    <property name="durata" type="float" value="1.9"/>
-   </properties>
-  </object>
   <object id="29" name="gabbia" x="1046" y="172" width="52" height="52"/>
  </objectgroup>
 </map>

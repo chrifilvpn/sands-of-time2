@@ -95,7 +95,7 @@ public class LevelScreen extends BaseScreen
     private Leva levaVicina;
 
     /** Modalità difficile: viaggi nel tempo limitati per ogni tentativo. */
-    public static final int VIAGGI_DIFFICILE = 10;
+    public static final int VIAGGI_DIFFICILE = 15;
     private int viaggiRimasti = -1;
 
     /** Ultime posizioni del personaggio (per la scia di fantasmi del viaggio nel tempo). */
