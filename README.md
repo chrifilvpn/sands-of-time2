@@ -1,4 +1,6 @@
-# Sands of Time
+# Sands of Time 2
+
+> Versione migliorata di [Sands of Time](https://github.com/chrifilvpn/sands-of-time): nuovo personaggio, livello finale rifatto e molte novità grafiche e di gameplay (vedi sotto).
 
 Platform 2D in Java + libGDX del **Gruppo Dugongo**.
 Un esploratore entra in una piramide e, grazie a un artefatto misterioso, può viaggiare tra **presente** e **passato**: ogni stanza esiste in due epoche, con piattaforme, trappole e uscite diverse.
@@ -11,6 +13,7 @@ Un esploratore entra in una piramide e, grazie a un artefatto misterioso, può v
 | SPAZIO, W o FRECCIA SU | saltare (tieni premuto per saltare più in alto) |
 | E | interagire (porte, bara, tesoro) |
 | T | viaggiare nel tempo (dopo aver trovato l'artefatto) |
+| Q o SHIFT (tieni premuto) | visione temporale: vedi muri e trappole dell'altra epoca |
 | ESC o P | pausa |
 | M | audio on/off |
 | F11 | schermo intero |
@@ -44,7 +47,7 @@ Per provarla sul tuo PC: `./gradlew :web:gdx_teavm_web_js_run` e poi apri http:/
 
 **Pubblicarla online**, due possibilità:
 
-- **GitHub Pages:** *Settings → Pages → Build and deployment → Source: GitHub Actions*. Poi rilancia la workflow (*Actions → Build e pubblicazione → Run workflow*). L'indirizzo sarà `https://chrifilvpn.github.io/sands-of-time/`.
+- **GitHub Pages:** *Settings → Pages → Build and deployment → Source: GitHub Actions*. Poi rilancia la workflow (*Actions → Build e pubblicazione → Run workflow*). L'indirizzo sarà `https://chrifilvpn.github.io/sands-of-time2/`.
 - **Render:** crea un **Static Site** (non un Web Service) collegato a questo repository con:
   - Branch: `web`
   - Build Command: `echo ok`
@@ -68,6 +71,7 @@ assets/
   mappaN_presente.tmx / mappaN_passato.tmx        i livelli (Tiled)
   suoni/                                          effetti sonori
 extra/assets_non_usati/                           file non usati dal gioco (bozze, vecchie versioni)
+extra/personaggio_vecchio/                        gli sprite del personaggio originale
 ```
 
 ## Creare o modificare un livello (Tiled)
@@ -90,7 +94,40 @@ Proprietà della mappa del presente (*Mappa → Proprietà mappa*):
 | `uscita` | `tocco` (si esce toccando `finish`, predefinito), `porta` (si esce premendo E), `passato` (nel presente `finish` è un muro chiuso), `tesoro` (E apre il tesoro e il gioco finisce) |
 | `titolo` | nome del livello mostrato all'inizio |
 
-## Novità di questa versione
+## Novità di Sands of Time 2
+
+**Personaggio e livello finale**
+- Esploratore ridisegnato da zero in pixel art (64×64): stesso concept (casco, zaino verde, pantaloncini) con più dettagli e un fazzoletto rosso. Animazioni nuove per fermo, corsa, salita, discesa e morte. Il cappello rotola via quando muore.
+- Le immagini usano le *mipmap*: il personaggio resta nitido a qualsiasi dimensione.
+- Livello 12: il personaggio non è più enorme (128 px invece di 205). Aprire il forziere ora scatena un bagliore che cresce, una pioggia di monete d'oro e un lampo dorato prima del finale.
+
+**Effetti visivi**
+- Scia temporale: premendo T restano tre "fantasmi" del personaggio e un anello di luce si allarga.
+- Il personaggio si schiaccia quando atterra e si allunga quando salta (*squash & stretch*).
+- Luce delle torce: aloni caldi che tremolano (livelli 2, 3 e 12).
+- Parallasse: nei livelli dal 4 all'11 lo sfondo scorre più piano delle piattaforme.
+- Sabbia che cade dal soffitto nella piramide (solo nel presente).
+- Polvere ai piedi mentre si corre.
+
+**Interfaccia**
+- Transizione "a clessidra": la sabbia riempie e libera lo schermo tra una schermata e l'altra.
+- Titolo del menu con un riflesso di luce che passa e granelli che cadono.
+- Cronometro attivabile dalle **Opzioni**, dove si regolano anche musica, effetti e schermo intero, e si può cancellare il salvataggio.
+- Record personali: miglior tempo, meno morti e più scarabei. Nella schermata finale compare "NUOVO RECORD!".
+
+**Gameplay**
+- **33 scarabei d'oro** da raccogliere, alcuni solo nel passato. Contatore nell'HUD.
+- **10 tavolette con geroglifici** (livelli 2–11): premi E per leggere un pezzo della storia di Thot.
+- **Visione temporale** (Q): mostra in trasparenza muri, trappole e uscita dell'altra epoca.
+- **12 trofei**, consultabili dal menu (TROFEI), con notifica quando li sblocchi.
+
+**Audio**
+- Passi diversi su sabbia e su pietra, gocce d'acqua lontane nella piramide, vento nel deserto.
+- In pausa la musica non si ferma: si abbassa e risale quando si riprende.
+
+Gli scarabei, le tavolette e le torce sono oggetti normali nelle mappe Tiled (`scarabeo`, `geroglifico` con la proprietà `testo`, `torcia`): si possono spostare, aggiungere o togliere a mano. Le proprietà della mappa `parallasse` (es. `0.75`) e `ambiente` (`deserto`) attivano parallasse e suoni d'ambiente.
+
+## Novità della prima versione (Sands of Time)
 
 **Bug corretti**
 - Finendo il livello 11 nel passato, il livello 12 partiva "nel passato" senza pavimento e il personaggio cadeva. Ora si parte nel passato solo se il livello ha una mappa del passato.
