@@ -1,6 +1,6 @@
 # Sands of Time 2
 
-> Versione migliorata di [Sands of Time](https://github.com/chrifilvpn/sands-of-time): nuovo personaggio, livello finale rifatto e molte novità grafiche e di gameplay (vedi sotto).
+> Versione migliorata di [Sands of Time](https://github.com/chrifilvpn/sands-of-time): livello finale rifatto e molte novità grafiche e di gameplay (vedi sotto).
 
 Platform 2D in Java + libGDX del **Gruppo Dugongo**.
 Un esploratore entra in una piramide e, grazie a un artefatto misterioso, può viaggiare tra **presente** e **passato**: ogni stanza esiste in due epoche, con piattaforme, trappole e uscite diverse.
