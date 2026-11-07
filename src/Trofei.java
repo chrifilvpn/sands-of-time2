@@ -32,6 +32,7 @@ public class Trofei
     };
 
     private static final String NOME = "sands_of_time_trofei";
+    private static int attive = 0;
 
     private static Preferences prefs()
     {
@@ -93,7 +94,7 @@ public class Trofei
         return id;
     }
 
-    /** Riquadro "TROFEO SBLOCCATO" che scende dall'alto a destra e poi sparisce. */
+    /** Riquadro "TROFEO SBLOCCATO" che entra da sinistra in basso e poi sparisce. */
     public static void notifica(Stage ui, String nome)
     {
         Group g = new Group();
@@ -112,13 +113,16 @@ public class Trofei
         g.addActor(titolo);
         g.addActor(testo);
         g.setSize(w, 52);
-        float x = BaseScreen.LARGHEZZA - w - 12;
-        g.setPosition(x, BaseScreen.ALTEZZA + 10);
+        // le notifiche in contemporanea si impilano verso l'alto
+        float y = 12 + (attive % 3) * 58;
+        attive++;
+        g.setPosition(-w - 10, y);
         ui.addActor(g);
         g.addAction(Actions.sequence(
-                Actions.moveTo(x, BaseScreen.ALTEZZA - 52 - 56, 0.4f, Interpolation.swingOut),
+                Actions.moveTo(12, y, 0.4f, Interpolation.swingOut),
                 Actions.delay(3f),
-                Actions.moveTo(x, BaseScreen.ALTEZZA + 10, 0.35f, Interpolation.pow2In),
+                Actions.moveTo(-w - 10, y, 0.35f, Interpolation.pow2In),
+                Actions.run(new Runnable() { public void run() { attive = Math.max(0, attive - 1); } }),
                 Actions.removeActor()));
     }
 }

@@ -451,7 +451,7 @@ public class LevelScreen extends BaseScreen
                 {"SPAZIO / W", "salta"},
                 {"E", "interagisci / leggi"},
                 {"T", "viaggia nel tempo"},
-                {"Q (tieni premuto)", "visione temporale"},
+                {"Q (tieni)", "visione temporale"},
                 {"ESC / P", "pausa"},
                 {"M", "audio on/off"},
                 {"F11", "schermo intero"}
@@ -463,7 +463,7 @@ public class LevelScreen extends BaseScreen
             Label tasto = etichettaUi(c[0], Risorse.fontPiccolo, coloreTasto);
             tasto.setPosition(222, yRiga);
             Label descr = etichettaUi(c[1], Risorse.fontPiccolo, coloreDescr);
-            descr.setPosition(410, yRiga);
+            descr.setPosition(400, yRiga);
             pausaAiuto.add(tasto);
             pausaAiuto.add(descr);
             yRiga -= 17;
@@ -615,7 +615,7 @@ public class LevelScreen extends BaseScreen
             lampo(new Color(1f, 0.2f, 0.1f, 1f), 0.35f, 0.25f);
             tremolio = 3f;
             cooldownTempo = 0.3f;
-            mostraMessaggio("Qualcosa ti blocca nell'altra epoca!  (tieni premuto Q per vedere)", 2f);
+            mostraMessaggio("Qualcosa ti blocca nell'altra epoca!  (Q per vedere)", 2f);
             return;
         }
 
@@ -1109,7 +1109,7 @@ public class LevelScreen extends BaseScreen
         iconaArtefatto.addAction(Actions.scaleTo(1f, 1f, 0.4f));
         tastoT.setVisible(mappaPassato != null);
         tastoQ.setVisible(mappaPassato != null);
-        mostraMessaggio("Premi T per viaggiare nel tempo  -  tieni premuto Q per sbirciare", 6f);
+        mostraMessaggio("T = viaggia nel tempo    Q = sbircia l'altra epoca", 6f);
         Trofei.sblocca("artefatto", uiStage);
         Save.salva(livello, true, isInPassato, StatoPartita.morti, StatoPartita.tempo);
     }
