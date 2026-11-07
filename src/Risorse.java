@@ -103,10 +103,11 @@ public class Risorse
         scarabeo        = BaseActor.getTextureMipMap("assets/scarabeo.png");
 
         // ---- animazioni ----
-        animIdle   = animazione("assets/Idle/Idle", 1, 4, 0.4f, true);
+        animIdle   = animazione("assets/Idle/Idle", 1, 4, 0.5f, true);
         animCorsa  = animazione("assets/Run/run", 1, 6, 0.09f, true);
-        animSalita = animazione("assets/Jump/jump", 1, 4, 0.07f, false);
-        animCaduta = animazione("assets/Jump/jump", 5, 8, 0.09f, false);
+        // personaggio originale: un'unica animazione di salto, usata sia in salita sia in discesa
+        animSalita = animazione("assets/Jump/jump", 1, 8, 0.1f, true);
+        animCaduta = animSalita;
         animMorte  = animazione("assets/Death/death", 1, 7, 0.12f, false);
 
         // ---- audio ----
