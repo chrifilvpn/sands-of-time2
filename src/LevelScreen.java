@@ -1378,7 +1378,7 @@ public class LevelScreen extends BaseScreen
             goTitolo.setText("PARTITA FINITA");
             goTitolo.pack();
             centra(goTitolo, 300);
-            goSotto.setText("Anubi non perdona. Livello raggiunto: " + livello + "     (R = ricomincia dal livello 1)");
+            goSotto.setText("Anubi non perdona. Eri al livello " + livello + "    (R = ricomincia)");
         } else
             goSotto.setText("Morti finora: " + StatoPartita.morti + "     (R = riprova)");
         centra(goSotto, 252);
