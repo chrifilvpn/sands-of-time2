@@ -14,6 +14,8 @@ public class Crollo
     private enum Stato { INTEGRA, TREMA, CADUTA }
 
     private static final float TEMPO_TREMA = 0.55f;
+    /** Quanto trema prima di cadere (le piattaforme "trappola" crollano quasi subito). */
+    public float tempoTrema = TEMPO_TREMA;
     private static final float TEMPO_RITORNO = 3f;
 
     public final Oggetto solido;
@@ -42,7 +44,7 @@ public class Crollo
     {
         if (stato != Stato.INTEGRA) return false;
         stato = Stato.TREMA;
-        timer = TEMPO_TREMA;
+        timer = tempoTrema;
         return true;
     }
 

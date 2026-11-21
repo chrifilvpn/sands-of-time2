@@ -50,7 +50,7 @@ public class MenuScreen extends BaseScreen
 
         boolean web = Risorse.isWeb();
         boolean difficileSbloccata = Trofei.sbloccato("fine");
-        int quanti = 5 + (web ? 0 : 1) + (difficileSbloccata ? 1 : 0);
+        int quanti = 5 + (web ? 0 : 1) + (difficileSbloccata ? 2 : 0);
         float altezzaBottone = 34, spazio = 7;
         float altezzaPannello = quanti * (altezzaBottone + spazio) + 22;
 
@@ -76,6 +76,10 @@ public class MenuScreen extends BaseScreen
             y -= altezzaBottone + spazio;
             bottoni.aggiungi("MODALITA' DIFFICILE", 480, y, 260, altezzaBottone, new Runnable() {
                 public void run() { nuovaPartita(true); }
+            });
+            y -= altezzaBottone + spazio;
+            bottoni.aggiungi("MODALITA' IMPOSSIBILE", 480, y, 260, altezzaBottone, new Runnable() {
+                public void run() { nuovaPartitaImpossibile(); }
             });
         }
         y -= altezzaBottone + spazio;
@@ -129,6 +133,15 @@ public class MenuScreen extends BaseScreen
     {
         StatoPartita.nuova();
         StatoPartita.difficile = difficile;
+        Save.cancella();
+        vai(new LevelScreen(1, false, false));
+    }
+
+    /** Zero morti: alla prima morte si ricomincia dal livello 1. */
+    private void nuovaPartitaImpossibile()
+    {
+        StatoPartita.nuova();
+        StatoPartita.impossibile = true;
         Save.cancella();
         vai(new LevelScreen(1, false, false));
     }

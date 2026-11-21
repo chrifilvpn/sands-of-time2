@@ -88,7 +88,7 @@
   <object id="18" name="scarabeo" x="728" y="382" width="24" height="24"/>
   <object id="19" name="geroglifico" x="704" y="376" width="32" height="40">
    <properties>
-    <property name="testo" value="Le trappole furono poste dagli architetti per proteggere il riposo del dio."/>
+    <property name="testo" value="Le trappole sono i miei denti. Chi non guarda due volte non esce."/>
    </properties>
   </object>
  </objectgroup>

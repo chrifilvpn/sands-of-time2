@@ -97,7 +97,7 @@
   <object id="24" name="scarabeo" x="24" y="606" width="24" height="24"/>
   <object id="25" name="geroglifico" x="380" y="248" width="32" height="40">
    <properties>
-    <property name="testo" value="Molti ladri entrarono. Nessuno capì che i muri di oggi erano le porte di ieri."/>
+    <property name="testo" value="Molti ladri sono entrati. Nessuno ha capito che i miei muri di oggi erano porte di ieri."/>
    </properties>
   </object>
  </objectgroup>

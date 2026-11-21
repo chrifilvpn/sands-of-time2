@@ -41,7 +41,8 @@ public class FineScreen extends BaseScreen
         Color oro = new Color(1f, 0.82f, 0.35f, 1f);
         Color verde = new Color(0.55f, 1f, 0.55f, 1f);
         aggiungi("CONGRATULAZIONI!", Risorse.fontTitolo, oro, 385, 0.3f);
-        aggiungi("Hai trovato il tesoro di Thot", Risorse.fontNormale, Color.WHITE, 342, 0.9f);
+        aggiungi(StatoPartita.impossibile ? "Anubi si inchina: modalita' impossibile completata"
+                : "Hai trovato il tesoro di Anubi", Risorse.fontNormale, Color.WHITE, 342, 0.9f);
 
         aggiungi("TEMPO      " + StatoPartita.tempoFormattato() + (nuovi[0] ? "   NUOVO RECORD!" : ""),
                 Risorse.fontMedio, nuovi[0] ? verde : oro, 280, 1.5f);
@@ -69,6 +70,7 @@ public class FineScreen extends BaseScreen
         if (StatoPartita.morti <= 5)      Trofei.sblocca("immortale", uiStage);
         if (presi >= Risorse.totaleScarabei) Trofei.sblocca("collezionista", uiStage);
         if (StatoPartita.difficile)       Trofei.sblocca("maestro", uiStage);
+        if (StatoPartita.impossibile && StatoPartita.morti == 0) Trofei.sblocca("favore", uiStage);
 
         Risorse.attutisci(false);
         Risorse.musica(false);

@@ -94,6 +94,5 @@
   <object id="23" name="scarabeo" x="1080" y="190" width="24" height="24"/>
  </objectgroup>
  <objectgroup id="5" name="meccaniche">
-  <object id="24" name="leva" x="604" y="608" width="32" height="32"/>
  </objectgroup>
 </map>

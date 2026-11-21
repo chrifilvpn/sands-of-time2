@@ -17,10 +17,13 @@ public class StatoPartita
     public static float tempoLivello = 0f;
     /** Modalità difficile: viaggi nel tempo limitati. */
     public static boolean difficile = false;
+    /** Modalita' impossibile: alla prima morte la partita finisce (si ricomincia dal livello 1). */
+    public static boolean impossibile = false;
 
     public static void nuova()
     {
         difficile = false;
+        impossibile = false;
         tempoLivello = 0f;
         morti = 0;
         tempo = 0f;
@@ -42,6 +45,7 @@ public class StatoPartita
         mortiNelLivello = 0;
         tempoLivello = 0f;
         difficile = Save.caricaDifficile();
+        impossibile = Save.caricaImpossibile();
     }
 
     public static String scarabeiComeTesto()

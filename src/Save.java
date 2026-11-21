@@ -31,7 +31,13 @@ public class Save
         p.putFloat(KEY_TEMPO, tempo);
         p.putString(KEY_SCARABEI, StatoPartita.scarabeiComeTesto());
         p.putBoolean("difficile", StatoPartita.difficile);
+        p.putBoolean("impossibile", StatoPartita.impossibile);
         p.flush();
+    }
+
+    public static boolean caricaImpossibile()
+    {
+        return prefs().getBoolean("impossibile", false);
     }
 
     public static boolean caricaDifficile()

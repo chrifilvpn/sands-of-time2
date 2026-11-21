@@ -83,7 +83,7 @@
   <object id="11" name="leva" x="896" y="352" width="32" height="32"/>
   <object id="12" name="geroglifico" x="576" y="184" width="32" height="40">
    <properties>
-    <property name="testo" value="Chi arriva fin qui ha imparato a leggere il tempo. La stanza del tesoro e' vicina."/>
+    <property name="testo" value="Sei arrivato piu' lontano di tutti. Ora ti mettero' davvero alla prova."/>
    </properties>
   </object>
   <object id="13" name="solid" x="0" y="832" width="1216" height="32"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="28">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="901">
  <properties>
   <property name="dimensionePersonaggio" type="float" value="57.6"/>
   <property name="uscita" value="tocco"/>
@@ -99,11 +99,13 @@
   <object id="25" name="scarabeo" x="444" y="190" width="24" height="24"/>
   <object id="26" name="geroglifico" x="96" y="760" width="32" height="40">
    <properties>
-    <property name="testo" value="Oltre queste sale dorme il tesoro, custodito dalla verità di Thot."/>
+    <property name="testo" value="Oltre queste sale dorme il mio tesoro, custodito dalla mia verita'."/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="5" name="meccaniche">
   <object id="27" name="gabbia" x="430" y="172" width="52" height="52"/>
+
+  <object id="900" name="leva" x="280" y="192" width="32" height="32"/>
  </objectgroup>
 </map>

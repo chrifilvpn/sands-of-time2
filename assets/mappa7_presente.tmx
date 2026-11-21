@@ -90,7 +90,7 @@
   <object id="16" name="scarabeo" x="716" y="254" width="24" height="24"/>
   <object id="17" name="geroglifico" x="832" y="632" width="32" height="40">
    <properties>
-    <property name="testo" value="Ascolta la sabbia che cade: è il tempo che scorre dentro la piramide."/>
+    <property name="testo" value="Ascolta la sabbia che cade: e' il mio respiro dentro la piramide."/>
    </properties>
   </object>
  </objectgroup>

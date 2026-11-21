@@ -18,18 +18,19 @@ public class Trofei
     public static final String[][] ELENCO = {
         // id, nome, descrizione
         {"primo_passo",   "Primo passo",       "Entra nella piramide"},
-        {"artefatto",     "Il dono di Thot",   "Trova l'artefatto del tempo"},
+        {"artefatto",     "Il dono di Anubi",   "Trova l'artefatto del tempo"},
         {"viaggiatore",   "Viaggiatore",       "Viaggia nel tempo 50 volte"},
         {"scarabeo",      "Primo scarabeo",    "Raccogli uno scarabeo d'oro"},
         {"collezionista", "Collezionista",     "Ogni scarabeo in una partita"},
         {"archeologo",    "Archeologo",        "Leggi tutte le tavolette"},
         {"intoccabile",   "Intoccabile",       "Un livello (dal 3) senza morire"},
         {"testardo",      "Testardo",          "Muori 25 volte"},
-        {"fine",          "Il tesoro di Thot", "Finisci il gioco"},
+        {"fine",          "Il tesoro di Anubi", "Finisci il gioco"},
         {"velocista",     "Velocista",         "Finisci in meno di 15 minuti"},
         {"immortale",     "Quasi immortale",   "Finisci con 5 morti o meno"},
         {"ingegnere",     "Ingegnere",         "Apri una gabbia con una leva"},
         {"maestro",       "Maestro del tempo", "Finisci in modalita' difficile"},
+        {"favore",        "Il favore di Anubi", "Finisci la modalita' impossibile"},
     };
 
     private static final String NOME = "sands_of_time_trofei";

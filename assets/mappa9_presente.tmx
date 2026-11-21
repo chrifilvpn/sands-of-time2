@@ -104,11 +104,10 @@
   <object id="33" name="scarabeo" x="836" y="734" width="24" height="24"/>
   <object id="34" name="geroglifico" x="736" y="248" width="32" height="40">
    <properties>
-    <property name="testo" value="Gli scarabei d'oro sono i passi di chi è venuto prima di te."/>
+    <property name="testo" value="Gli scarabei d'oro sono i passi di chi e' venuto prima di te. Nessuno e' tornato."/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="5" name="meccaniche">
-  <object id="35" name="gabbia" x="130" y="620" width="52" height="52"/>
  </objectgroup>
 </map>

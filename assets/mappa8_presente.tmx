@@ -100,7 +100,7 @@
   <object id="26" name="scarabeo" x="600" y="510" width="24" height="24"/>
   <object id="27" name="geroglifico" x="1160" y="664" width="32" height="40">
    <properties>
-    <property name="testo" value="Thot non premia la forza, ma chi sa osservare due volte la stessa stanza."/>
+    <property name="testo" value="Peso il cuore di ogni visitatore sulla mia bilancia. Il tuo, finora, e' leggero."/>
    </properties>
   </object>
  </objectgroup>

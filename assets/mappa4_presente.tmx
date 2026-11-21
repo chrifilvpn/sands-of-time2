@@ -93,7 +93,7 @@
   <object id="20" name="scarabeo" x="676" y="638" width="24" height="24"/>
   <object id="21" name="geroglifico" x="544" y="312" width="32" height="40">
    <properties>
-    <property name="testo" value="L'ankh d'oro lega due epoche: chi lo porta cammina tra ieri e oggi."/>
+    <property name="testo" value="L'ankh che porti e' mio. Con esso passi da ieri a oggi, come facevo io."/>
    </properties>
   </object>
  </objectgroup>

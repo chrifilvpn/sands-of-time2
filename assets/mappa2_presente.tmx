@@ -55,7 +55,7 @@
   <object id="11" name="scarabeo" x="644" y="726" width="24" height="24"/>
   <object id="12" name="geroglifico" x="400" y="720" width="32" height="40">
    <properties>
-    <property name="testo" value="Questa piramide fu costruita per Thot, il dio che misura il tempo."/>
+    <property name="testo" value="Io sono Anubi, signore delle sabbie e guardiano dei morti. Questa piramide e' la mia casa."/>
    </properties>
   </object>
   <object id="13" name="torcia" x="663" y="555" width="4" height="4"/>

@@ -87,6 +87,7 @@ public class LevelScreen extends BaseScreen
     private static class Leva { Oggetto area; Image img; boolean passato; boolean tirata; }
     private static class Gabbia { Oggetto area; Image img; boolean passato; boolean aperta; }
     private final ArrayList<Crollo> crolli = new ArrayList<Crollo>();
+    private final ArrayList<Insidia> insidie = new ArrayList<Insidia>();
     private final ArrayList<PiattaformaMobile> mobili = new ArrayList<PiattaformaMobile>();
     private final ArrayList<Leva> leve = new ArrayList<Leva>();
     private final ArrayList<Gabbia> gabbie = new ArrayList<Gabbia>();
@@ -121,7 +122,7 @@ public class LevelScreen extends BaseScreen
     private Image ingranaggio;
 
     private Image cutOverlay, cutImmagine;
-    private Label cutTitolo, cutSotto;
+    private Label cutTitolo, cutSotto, cutCitazione;
 
     private Image letOverlay, letPannello, letIcona;
     private Label letTitolo, letTesto, letSotto;
@@ -248,7 +249,20 @@ public class LevelScreen extends BaseScreen
             com.badlogic.gdx.scenes.scene2d.Group g = mappa.ritagliaTile(o.getRettangolo());
             g.setTouchable(Touchable.disabled);
             mainStage.addActor(g);
-            crolli.add(new Crollo(o, g, passato));
+            Crollo c = new Crollo(o, g, passato);
+            c.tempoTrema = proprieta(obj, "ritardo", 0.55f);
+            crolli.add(c);
+        }
+        // trappole a sorpresa: spine che spuntano e zanne che cadono
+        for (String nome : new String[] { "scatto", "cade" }) {
+            for (MapObject obj : mappa.getObjectList(nome)) {
+                Oggetto o = Oggetto.daMappa(obj, Oggetto.Tipo.TRAPPOLA, mainStage);
+                com.badlogic.gdx.scenes.scene2d.Group g = mappa.ritagliaTile(o.getRettangolo());
+                g.setTouchable(Touchable.disabled);
+                mainStage.addActor(g);
+                insidie.add(new Insidia(nome.equals("cade") ? Insidia.Tipo.CADE : Insidia.Tipo.SCATTO, o, g, passato,
+                        proprieta(obj, "distanza", 48f), proprieta(obj, "ritardo", 0.12f)));
+            }
         }
         for (MapObject obj : mappa.getObjectList("kill"))
             trappole.add(Oggetto.daMappa(obj, Oggetto.Tipo.TRAPPOLA, mainStage));
@@ -403,7 +417,8 @@ public class LevelScreen extends BaseScreen
         flash = rettangolo(Color.WHITE, 0f);
 
         // HUD in alto a sinistra
-        hudLivello = etichettaUi("LIVELLO " + livello + "/" + Risorse.numeroLivelli, Risorse.fontPiccolo, oro);
+        hudLivello = etichettaUi("LIVELLO " + livello + "/" + Risorse.numeroLivelli
+                + (StatoPartita.impossibile ? "  IMPOSSIBILE" : StatoPartita.difficile ? "  DIFFICILE" : ""), Risorse.fontPiccolo, oro);
         hudLivello.setPosition(12, ALTEZZA - 24);
         hudEpoca = etichettaUi("", Risorse.fontPiccolo, Color.WHITE);
         hudEpoca.setPosition(12, ALTEZZA - 42);
@@ -463,7 +478,7 @@ public class LevelScreen extends BaseScreen
         // ---------- cutscene artefatto ----------
         cutOverlay = rettangolo(Color.BLACK, 0f);
         cutOverlay.setVisible(false);
-        cutTitolo = etichettaUi("Hai trovato un artefatto misterioso", Risorse.fontMedio, oro);
+        cutTitolo = etichettaUi("Hai trovato l'artefatto di Anubi", Risorse.fontMedio, oro);
         centra(cutTitolo, ALTEZZA * 0.74f);
         cutTitolo.setVisible(false);
         cutImmagine = new Image(Risorse.artefattoAcceso);
@@ -473,6 +488,10 @@ public class LevelScreen extends BaseScreen
         cutImmagine.setTouchable(Touchable.disabled);
         cutImmagine.setVisible(false);
         uiStage.addActor(cutImmagine);
+        cutCitazione = etichettaUi("\"Ora il tempo e' nelle tue mani... finche' io lo permetto.\"  - Anubi",
+                Risorse.fontPiccolo, new Color(0.85f, 0.8f, 0.7f, 1f));
+        centra(cutCitazione, ALTEZZA * 0.24f);
+        cutCitazione.setVisible(false);
         cutSotto = etichettaUi("Premi E per continuare", Risorse.fontPiccolo, Color.WHITE);
         centra(cutSotto, ALTEZZA * 0.17f);
         cutSotto.setVisible(false);
@@ -538,7 +557,7 @@ public class LevelScreen extends BaseScreen
         centra(goTitolo, 300);
         goSotto = etichettaUi("", Risorse.fontPiccolo, new Color(0.9f, 0.8f, 0.8f, 1f));
         goBottoni = new ListaBottoni(uiStage);
-        goBottoni.aggiungi("RIPROVA",         280, 200, 240, 38, new Runnable() { public void run() { riprova(); } });
+        goBottoni.aggiungi(StatoPartita.impossibile ? "RICOMINCIA" : "RIPROVA", 280, 200, 240, 38, new Runnable() { public void run() { riprova(); } });
         goBottoni.aggiungi("MENU PRINCIPALE", 280, 152, 240, 38, new Runnable() { public void run() { vaiAlMenu(); } });
         mostraGameOverUi(false);
 
@@ -650,6 +669,7 @@ public class LevelScreen extends BaseScreen
             c.grafica.setVisible(c.passato == passato);
             c.solido.setEnable(c.passato == passato && !c.isCaduta());
         }
+        for (Insidia i : insidie) i.grafica.setVisible(i.passato == passato && (i.isAttiva() || i.tipo == Insidia.Tipo.CADE));
         for (PiattaformaMobile m : mobili) m.img.setVisible(m.passato == passato);
         for (Leva l : leve) l.img.setVisible(l.passato == passato);
         for (Gabbia g : gabbie) g.img.setVisible(g.passato == passato && !g.aperta);
@@ -846,6 +866,15 @@ public class LevelScreen extends BaseScreen
         // trappole dell'epoca attuale
         for (Oggetto k : (isInPassato ? trappolePassato : trappolePresente)) {
             if (esploratore.overlaps(k)) {
+                muori();
+                return;
+            }
+        }
+        for (Insidia i : insidie) {
+            boolean qui = i.passato == isInPassato;
+            if (i.aggiorna(dt, qui, esploratore.getCentroX(), esploratore.getPiediY()) && qui)
+                Risorse.suona(i.tipo == Insidia.Tipo.CADE ? Risorse.sCrollo : Risorse.sBloccato, 0.8f, 1.4f);
+            if (qui && i.isAttiva() && esploratore.overlaps(i.zona)) {
                 muori();
                 return;
             }
@@ -1289,6 +1318,10 @@ public class LevelScreen extends BaseScreen
                 Actions.parallel(Actions.fadeIn(1.2f), Actions.scaleTo(1f, 1f, 1.2f)),
                 Actions.forever(Actions.sequence(Actions.scaleTo(1.06f, 1.06f, 0.8f), Actions.scaleTo(1f, 1f, 0.8f)))));
 
+        cutCitazione.setVisible(true);
+        cutCitazione.getColor().a = 0;
+        cutCitazione.addAction(Actions.sequence(Actions.delay(1.2f), Actions.fadeIn(1f)));
+
         cutSotto.setVisible(true);
         cutSotto.getColor().a = 0;
         cutSotto.addAction(Actions.sequence(Actions.delay(1.6f), Actions.run(new Runnable() {
@@ -1301,7 +1334,7 @@ public class LevelScreen extends BaseScreen
         cutscene = false;
         hasArtifact = true;
         artefattoAlRiavvio = true;
-        Actor[] parti = { cutOverlay, cutTitolo, cutImmagine, cutSotto };
+        Actor[] parti = { cutOverlay, cutTitolo, cutImmagine, cutSotto, cutCitazione };
         for (Actor a : parti) {
             a.clearActions();
             a.setVisible(false);
@@ -1330,6 +1363,10 @@ public class LevelScreen extends BaseScreen
                 new Color(0.9f, 0.3f, 0.2f, 0.9f), 110f, 0.8f, 200f);
         if (Trofei.incrementa("morti") >= 25)
             Trofei.sblocca("testardo", uiStage);
+        if (StatoPartita.impossibile) {   // la partita e' finita: niente "continua"
+            Save.cancella();
+            return;
+        }
         Save.salva(livello, artefattoAlRiavvio, passatoIniziale && mappaPassato != null,
                 StatoPartita.morti, StatoPartita.tempo);
     }
@@ -1337,7 +1374,13 @@ public class LevelScreen extends BaseScreen
     private void mostraGameOver()
     {
         gameOver = true;
-        goSotto.setText("Morti finora: " + StatoPartita.morti + "     (R = riprova)");
+        if (StatoPartita.impossibile) {
+            goTitolo.setText("PARTITA FINITA");
+            goTitolo.pack();
+            centra(goTitolo, 300);
+            goSotto.setText("Anubi non perdona. Livello raggiunto: " + livello + "     (R = ricomincia dal livello 1)");
+        } else
+            goSotto.setText("Morti finora: " + StatoPartita.morti + "     (R = riprova)");
         centra(goSotto, 252);
         mostraGameOverUi(true);
         goOverlay.getColor().a = 0;
@@ -1415,6 +1458,14 @@ public class LevelScreen extends BaseScreen
     {
         if (transizione) return;
         transizione = true;
+        if (StatoPartita.impossibile && gameOver) {   // si ricomincia tutto da capo
+            StatoPartita.nuova();
+            StatoPartita.impossibile = true;
+            sabbia.chiudi(0.5f, new Runnable() {
+                public void run() { BaseGame.setActiveScreen(new LevelScreen(1, false, false)); }
+            });
+            return;
+        }
         sabbia.chiudi(0.5f, new Runnable() {
             public void run() { BaseGame.setActiveScreen(new LevelScreen(livello, artefattoAlRiavvio, passatoIniziale)); }
         });
