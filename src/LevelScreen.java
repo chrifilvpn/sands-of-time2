@@ -1521,6 +1521,7 @@ public class LevelScreen extends BaseScreen
     @Override
     public boolean keyDown(int keyCode)
     {
+        if (TRACCIA) System.out.println("KD " + fotogramma + " " + keyCode + " t=" + transizione + " c=" + cutscene + " l=" + lettura + " p=" + pausa);
         if (keyCode == Input.Keys.ESCAPE || keyCode == Input.Keys.P) {
             if (lettura) { chiudiTavoletta(); return true; }
             if (puoMettereInPausa()) alternaPausa();
