@@ -60,10 +60,10 @@ public abstract class BaseScreen extends InputAdapter implements Screen
     // (1) input (eventi gestiti dai listener; input continuo in update)
     // (2) logica del gioco
     // (3) disegno
-    @Override
     private static final float DT_FISSO =
             com.badlogic.gdx.Gdx.app.getPreferences("sands_of_time_debug").getFloat("dtFisso", 0f);
 
+    @Override
     public void render(float dt)
     {
         // limita il tempo che può passare (es. mentre si trascina la finestra)
