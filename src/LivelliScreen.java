@@ -4,17 +4,24 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 /**
- * Selezione dei livelli: si possono rigiocare tutti i livelli già raggiunti almeno una volta.
+ * Selezione dei livelli: si può giocare QUALSIASI livello, anche se non è ancora stato raggiunto,
+ * e con la difficoltà che si vuole (normale, difficile, impossibile).
  * Sotto ogni livello c'è il miglior tempo.
- * FRECCE per scegliere (SU/GIÙ scorrono, SINISTRA/DESTRA anche), INVIO per giocare, ESC per tornare.
+ * FRECCE per scegliere (SU/GIÙ scorrono, SINISTRA/DESTRA anche; sul bottone della difficoltà la cambiano),
+ * INVIO per giocare, ESC per tornare.
  */
 public class LivelliScreen extends BaseScreen
 {
     private ListaBottoni bottoni;
     private TransizioneSabbia sabbia;
     private boolean uscendo = false;
+    private TextButton bottoneDifficolta;
+    /** 0 = normale, 1 = difficile, 2 = impossibile (resta scelta finché il gioco è aperto). */
+    private static int difficolta = 0;
+    private static final String[] NOMI = { "NORMALE", "DIFFICILE", "IMPOSSIBILE" };
 
     @Override
     public void initialize()
@@ -32,17 +39,23 @@ public class LivelliScreen extends BaseScreen
 
         Color oro = new Color(1f, 0.82f, 0.35f, 1f);
         Label titolo = Risorse.etichetta("LIVELLI", Risorse.fontGrande, oro);
-        titolo.setPosition(Math.round(LARGHEZZA / 2f - titolo.getWidth() / 2f), 395);
+        titolo.setPosition(Math.round(LARGHEZZA / 2f - titolo.getWidth() / 2f), 400);
         uiStage.addActor(titolo);
 
-        int massimo = Save.livelloMassimo();
         int n = Risorse.numeroLivelli;
         int colonne = 5;
-        float w = 100, h = 48, gapX = 22, gapY = 40;
+        float w = 100, h = 38, gapX = 22, gapY = 28;
         float x0 = LARGHEZZA / 2f - (colonne * w + (colonne - 1) * gapX) / 2f;
-        float yTop = 320;
+        float yTop = 292;
 
         bottoni = new ListaBottoni(uiStage);
+        // bottone 0: la difficoltà (INVIO o SINISTRA/DESTRA per cambiarla)
+        bottoneDifficolta = bottoni.aggiungi(testoDifficolta(), LARGHEZZA / 2f - 160, 350, 320, 34, new Runnable() {
+            public void run() { cambiaDifficolta(1); }
+        });
+        bottoni.setLaterali(0,
+                new Runnable() { public void run() { cambiaDifficolta(-1); } },
+                new Runnable() { public void run() { cambiaDifficolta(1); } });
         for (int i = 1; i <= n; i++) {
             final int livello = i;
             int col = (i - 1) % colonne, riga = (i - 1) / colonne;
@@ -51,27 +64,23 @@ public class LivelliScreen extends BaseScreen
             bottoni.aggiungi(String.valueOf(i), x, y, w, h, new Runnable() {
                 public void run() { gioca(livello); }
             });
-            boolean sbloccato = i <= massimo;
-            if (!sbloccato) bottoni.setAttivo(i - 1, false);
-
             float t = Save.tempoLivello(i);
-            String sotto = !sbloccato ? "bloccato" : (t > 0 ? StatoPartita.formatta(t) : "--:--");
-            Label l = Risorse.etichetta(sotto, Risorse.fontPiccolo,
-                    sbloccato ? new Color(0.9f, 0.85f, 0.75f, 1f) : Color.GRAY);
-            l.setPosition(Math.round(x + w / 2f - l.getWidth() / 2f), y - 16);
+            String sotto = t > 0 ? StatoPartita.formatta(t) : "--:--";
+            Label l = Risorse.etichetta(sotto, Risorse.fontPiccolo, new Color(0.9f, 0.85f, 0.75f, 1f));
+            l.setPosition(Math.round(x + w / 2f - l.getWidth() / 2f), y - 15);
             uiStage.addActor(l);
 
             // sinistra/destra spostano di uno, come su/giù
-            final int indice = i - 1;
+            final int indice = i;
             bottoni.setLaterali(indice,
                     new Runnable() { public void run() { sposta(indice, -1); } },
                     new Runnable() { public void run() { sposta(indice, 1); } });
         }
-        bottoni.setSelezionato(Math.min(massimo, n) - 1);
+        bottoni.setSelezionato(Math.max(1, Math.min(Save.livelloMassimo(), n)));
 
-        Label aiuto = Risorse.etichetta("Sotto ogni livello: il tuo miglior tempo    ESC per tornare",
+        Label aiuto = Risorse.etichetta("Sotto ogni livello il tuo miglior tempo    ESC per tornare",
                 Risorse.fontPiccolo, new Color(1f, 1f, 1f, 0.6f));
-        aiuto.setPosition(Math.round(LARGHEZZA / 2f - aiuto.getWidth() / 2f), 56);
+        aiuto.setPosition(Math.round(LARGHEZZA / 2f - aiuto.getWidth() / 2f), 50);
         uiStage.addActor(aiuto);
 
         sabbia = new TransizioneSabbia(uiStage);
@@ -81,8 +90,19 @@ public class LivelliScreen extends BaseScreen
     private void sposta(int indice, int direzione)
     {
         int nuovo = indice + direzione;
-        if (nuovo >= 0 && nuovo < Save.livelloMassimo() && nuovo < Risorse.numeroLivelli)
+        if (nuovo >= 1 && nuovo <= Risorse.numeroLivelli)
             bottoni.setSelezionato(nuovo);
+    }
+
+    private static String testoDifficolta()
+    {
+        return "<  DIFFICOLTA': " + NOMI[difficolta] + "  >";
+    }
+
+    private void cambiaDifficolta(int verso)
+    {
+        difficolta = (difficolta + verso + NOMI.length) % NOMI.length;
+        bottoneDifficolta.setText(testoDifficolta());
     }
 
     private void gioca(int livello)
@@ -90,6 +110,9 @@ public class LivelliScreen extends BaseScreen
         if (uscendo) return;
         uscendo = true;
         StatoPartita.nuova();
+        StatoPartita.difficile = difficolta == 1;
+        StatoPartita.impossibile = difficolta == 2;
+        StatoPartita.livelloIniziale = livello;   // in impossibile, morendo si ricomincia da qui
         // dal livello 3 in poi l'artefatto è già stato trovato
         final LevelScreen schermata = new LevelScreen(livello, livello >= 3, false);
         sabbia.chiudi(0.6f, new Runnable() {

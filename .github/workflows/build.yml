@@ -2,7 +2,7 @@ name: Build e pubblicazione
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, sviluppo ]
   workflow_dispatch:
 
 permissions:
@@ -60,6 +60,7 @@ jobs:
         with:
           path: web/build/dist/js/webapp
       - name: Pubblica sul ramo "web" (per Render Static Site)
+        if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -70,6 +71,7 @@ jobs:
   pages:
     name: Pubblica su GitHub Pages
     needs: web
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

@@ -19,11 +19,14 @@ public class StatoPartita
     public static boolean difficile = false;
     /** Modalita' impossibile: alla prima morte la partita finisce (si ricomincia dal livello 1). */
     public static boolean impossibile = false;
+    /** Livello da cui è partita questa partita (1 = partita intera; altrimenti scelto in LIVELLI). */
+    public static int livelloIniziale = 1;
 
     public static void nuova()
     {
         difficile = false;
         impossibile = false;
+        livelloIniziale = 1;
         tempoLivello = 0f;
         morti = 0;
         tempo = 0f;

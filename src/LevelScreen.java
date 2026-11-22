@@ -98,6 +98,9 @@ public class LevelScreen extends BaseScreen
     /** Modalità difficile: viaggi nel tempo limitati per ogni tentativo. */
     public static final int VIAGGI_DIFFICILE = 15;
     private int viaggiRimasti = -1;
+    /** Solo per i test automatici: stampa la posizione del personaggio a ogni fotogramma. */
+    private static final boolean TRACCIA = Gdx.app.getPreferences("sands_of_time_debug").getBoolean("traccia", false);
+    private int fotogramma = 0;
 
     /** Ultime posizioni del personaggio (per la scia di fantasmi del viaggio nel tempo). */
     private static final int STORIA = 24;
@@ -157,7 +160,6 @@ public class LevelScreen extends BaseScreen
             StatoPartita.mortiNelLivello = 0;
             StatoPartita.tempoLivello = 0f;
         }
-        viaggiRimasti = StatoPartita.difficile ? VIAGGI_DIFFICILE : -1;
         Save.registraLivello(livello);
 
         // ---------- mappe e luci delle torce ----------
@@ -201,6 +203,13 @@ public class LevelScreen extends BaseScreen
 
         // ---------- epoca iniziale ----------
         boolean passato = passatoIniziale && mappaPassato != null;
+
+        // viaggi nel tempo disponibili: illimitati, 15 in difficile, e in impossibile ESATTAMENTE quelli
+        // che servono (il minimo per finire il livello prendendo tutto, calcolato e scritto nella mappa)
+        if (StatoPartita.impossibile)
+            viaggiRimasti = Math.round(mappaPresente.getProprietaNumero(passato ? "viaggiPassato" : "viaggiPresente", -1));
+        else
+            viaggiRimasti = StatoPartita.difficile ? VIAGGI_DIFFICILE : -1;
 
         // ---------- personaggio ----------
         esploratore = new Esploratore(0, 0, mainStage, dimensione);
@@ -880,6 +889,8 @@ public class LevelScreen extends BaseScreen
             }
         }
 
+        if (TRACCIA) System.out.println("TR " + (++fotogramma) + " " + esploratore.getX() + " " + esploratore.getY() + " "
+                + esploratore.velocityVec.y + " " + (isInPassato ? 1 : 0) + " " + (esploratore.isATerra() ? 1 : 0) + " " + dt);
         raccogliScarabei();
         aggiornaInterazione();
         aggiornaAmbiente(dt);
@@ -1458,11 +1469,13 @@ public class LevelScreen extends BaseScreen
     {
         if (transizione) return;
         transizione = true;
-        if (StatoPartita.impossibile && gameOver) {   // si ricomincia tutto da capo
+        if (StatoPartita.impossibile && gameOver) {   // si ricomincia da capo (dal livello 1 o da quello scelto)
+            final int inizio = StatoPartita.livelloIniziale;
             StatoPartita.nuova();
             StatoPartita.impossibile = true;
+            StatoPartita.livelloIniziale = inizio;
             sabbia.chiudi(0.5f, new Runnable() {
-                public void run() { BaseGame.setActiveScreen(new LevelScreen(1, false, false)); }
+                public void run() { BaseGame.setActiveScreen(new LevelScreen(inizio, inizio >= 3, false)); }
             });
             return;
         }
