@@ -67,6 +67,14 @@ jobs:
           publish_branch: web
           publish_dir: web/build/dist/js/webapp
           force_orphan: true
+      - name: Pubblica la versione di prova sul ramo "web-sviluppo"
+        if: github.ref == 'refs/heads/sviluppo'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: web-sviluppo
+          publish_dir: web/build/dist/js/webapp
+          force_orphan: true
 
   pages:
     name: Pubblica su GitHub Pages
