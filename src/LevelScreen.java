@@ -206,10 +206,13 @@ public class LevelScreen extends BaseScreen
 
         // viaggi nel tempo disponibili: illimitati, 15 in difficile, e in impossibile ESATTAMENTE quelli
         // che servono (il minimo per finire il livello prendendo tutto, calcolato e scritto nella mappa)
+        int minimo = Math.round(mappaPresente.getProprietaNumero(passato ? "viaggiPassato" : "viaggiPresente", -1));
         if (StatoPartita.impossibile)
-            viaggiRimasti = Math.round(mappaPresente.getProprietaNumero(passato ? "viaggiPassato" : "viaggiPresente", -1));
+            viaggiRimasti = minimo;
+        else if (StatoPartita.difficile)   // 15, ma sempre almeno 3 in piu' del minimo indispensabile
+            viaggiRimasti = Math.max(VIAGGI_DIFFICILE, minimo + 3);
         else
-            viaggiRimasti = StatoPartita.difficile ? VIAGGI_DIFFICILE : -1;
+            viaggiRimasti = -1;
 
         // ---------- personaggio ----------
         esploratore = new Esploratore(0, 0, mainStage, dimensione);

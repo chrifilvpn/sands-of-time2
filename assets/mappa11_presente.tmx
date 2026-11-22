@@ -116,7 +116,7 @@
  </objectgroup>
  <objectgroup id="4" name="decorazioni">
   <object id="45" name="scarabeo" x="100" y="62" width="24" height="24"/>
-  <object id="46" name="scarabeo" x="804" y="62" width="24" height="24"/>
+  <object id="46" name="scarabeo" x="1124" y="222" width="24" height="24"/>
   <object id="47" name="geroglifico" x="1120" y="504" width="32" height="40">
    <properties>
     <property name="testo" value="Solo chi ha domato il tempo vedra' la mia stanza. Ma la strada non e' finita."/>

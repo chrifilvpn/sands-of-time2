@@ -98,7 +98,9 @@ Proprietà della mappa del presente (*Mappa → Proprietà mappa*):
 - **La piramide è di Anubi**, il dio sciacallo: l'artefatto è suo, e nelle tavolette è lui che parla. Anche la stanza del tesoro ora è dedicata a lui (scritta sul muro e statua con la testa di sciacallo).
 - **Sei livelli "cattivissimi" (14–19):** *La scala delle spine*, *Il pozzo di Anubi*, *Le zanne del tempo*, *Il salto nel buio*, *La bilancia del cuore*, *Il giudizio di Anubi*. Piattaforme piccole che si alternano tra le due epoche (bisogna cambiare epoca a ogni salto, anche a mezz'aria), spine e zanne che esistono in un'epoca sola. La stanza del tesoro ora è il livello 20.
 - **Trappole a sorpresa** (ispirate a Level Devil): spine che spuntano quando ti avvicini (oggetto `scatto`), zanne che si staccano dal soffitto quando ci passi sotto (oggetto `cade`), piattaforme finte che sembrano vere (solo tile, senza `solid`). Proprietà facoltative: `distanza` e `ritardo`. Un `crollo` può avere la proprietà `ritardo` per crollare prima.
-- **Modalità impossibile** (si sblocca insieme alla difficile): zero morti. Alla prima morte la partita finisce e si ricomincia dal livello 1. Finirla sblocca il trofeo "Il favore di Anubi".
+- **Modalità impossibile** (si sblocca insieme alla difficile, oppure si sceglie in LIVELLI): zero morti e viaggi nel tempo contati. In ogni livello hai **esattamente** i viaggi che servono per arrivare all'uscita prendendo tutti gli scarabei: non uno di più. Alla prima morte la partita finisce e si ricomincia (dal livello 1, o dal livello scelto in LIVELLI). Finirla sblocca il trofeo "Il favore di Anubi".
+- **LIVELLI:** si può giocare qualsiasi livello, anche se non l'hai ancora raggiunto, con la difficoltà che vuoi (NORMALE, DIFFICILE, IMPOSSIBILE: il primo bottone, si cambia con SINISTRA/DESTRA o INVIO).
+- I viaggi minimi di ogni livello sono scritti nella mappa del presente (proprietà `viaggiPresente` e `viaggiPassato`, a seconda dell'epoca in cui si comincia). Li calcola un programma a parte (cartella `strumenti/`) che rifà la fisica del gioco fotogramma per fotogramma e prova tutte le mosse possibili.
 - **Bug del livello 10 risolto:** la leva era dopo un salto nel vuoto e non si poteva più tornare alla gabbia. Ora in tutti i livelli la leva è vicino alla sua gabbia.
 
 La versione precedente a queste novità è salvata nel ramo `salvataggio-prima-di-anubi-e-livelli-cattivi`.
@@ -108,8 +110,8 @@ La versione precedente a queste novità è salvata nel ramo `salvataggio-prima-d
 - **Piattaforme che crollano:** tremano quando ci sali e poi cadono; dopo 3 secondi ricompaiono. In Tiled sono oggetti `crollo` al posto di `solid`, e i loro tile vengono staccati dalla mappa automaticamente.
 - **Piattaforme mobili:** si muovono avanti e indietro (o su e giù) e ti trasportano. Ci si sale solo da sopra. In Tiled sono oggetti `mobile` con le proprietà `dx`, `dy` (pixel, `dy` positivo = verso l'alto) e `durata` (secondi).
 - **Leve e gabbie:** alcuni scarabei sono chiusi in una gabbia. La leva per aprirla è spesso nell'altra epoca. In Tiled sono oggetti `leva` e `gabbia`; una leva apre tutte le gabbie del livello.
-- **Selezione livelli** (menu > LIVELLI): rigiochi i livelli già raggiunti, con il tuo miglior tempo per ognuno.
-- **Modalità difficile:** si sblocca dopo aver finito il gioco. Hai 15 viaggi nel tempo per ogni tentativo e il cronometro è sempre visibile. Finirla sblocca il trofeo "Maestro del tempo".
+- **Selezione livelli** (menu > LIVELLI): con il tuo miglior tempo per ognuno.
+- **Modalità difficile:** si sblocca dopo aver finito il gioco. Hai 15 viaggi nel tempo per ogni tentativo (almeno 3 in più del minimo, nei livelli che ne richiedono tanti) e il cronometro è sempre visibile. Finirla sblocca il trofeo "Maestro del tempo".
 - **Due livelli nuovi:** 12 *Il ponte crollato* e 13 *Il pozzo del tempo*, costruiti per usare le nuove meccaniche. (La stanza del tesoro era il livello 14.)
 - 2 trofei nuovi (13 in totale) e 6 scarabei in più (39 in totale).
 

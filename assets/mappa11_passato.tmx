@@ -111,7 +111,7 @@
   <object id="42" name="kill" x="833.835" y="496.631" width="30.1649" height="15.3692"/>
  </objectgroup>
  <objectgroup id="4" name="decorazioni">
-  <object id="44" name="scarabeo" x="708" y="62" width="24" height="24"/>
+  <object id="44" name="scarabeo" x="996" y="414" width="24" height="24"/>
  </objectgroup>
  <objectgroup id="5" name="meccaniche">
  </objectgroup>
