@@ -61,10 +61,15 @@ public abstract class BaseScreen extends InputAdapter implements Screen
     // (2) logica del gioco
     // (3) disegno
     @Override
+    private static final float DT_FISSO =
+            com.badlogic.gdx.Gdx.app.getPreferences("sands_of_time_debug").getFloat("dtFisso", 0f);
+
     public void render(float dt)
     {
         // limita il tempo che può passare (es. mentre si trascina la finestra)
         dt = Math.min(dt, 1/30f);
+        // solo per i test automatici: passo di tempo fisso (si attiva dalle preferenze di debug)
+        if (DT_FISSO > 0) dt = DT_FISSO;
 
         uiStage.act(dt);
         if (!isMondoFermo())
