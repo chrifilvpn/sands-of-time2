@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="10">
  <properties>
+  <property name="viaggiPresente" type="int" value="0"/>
   <property name="dimensionePersonaggio" type="float" value="96"/>
   <property name="uscita" value="porta"/>
   <property name="titolo" value="Il deserto"/>

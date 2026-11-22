@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="16">
  <properties>
+  <property name="viaggiPresente" type="int" value="1"/>
   <property name="dimensionePersonaggio" type="float" value="96"/>
   <property name="uscita" value="passato"/>
   <property name="titolo" value="La sala d'ingresso"/>
