@@ -32,6 +32,10 @@ public class Risolutore
     }
 
     static final class Crollo { R r; int ep; float trema; }
+    /** Zanna che cade dal soffitto (oggetto "cade"): come Insidia.Tipo.CADE nel gioco. */
+    static final class Zanna { R r; int ep; float distanza, ritardo; }
+    List<Zanna> zanne = new ArrayList<>();
+    int nSlot() { return crolli.size() + zanne.size(); }
     static final class Mobile { R base; int ep; float dx, dy, durata; }
 
     // ------------------------------------------------------------- livello
@@ -131,6 +135,13 @@ public class Risolutore
             }
             // le spine "a scatto" uccidono come le trappole normali (scattano prima che tu le superi)
             for (Element o : oggetti(d, "scatto")) kill[ep].add(rett(o, mapH));
+            for (Element o : oggetti(d, "cade")) {
+                Zanna z = new Zanna(); z.r = rett(o, mapH); z.ep = ep;
+                Map<String, String> p = props(o);
+                z.distanza = Float.parseFloat(p.getOrDefault("distanza", "48"));
+                z.ritardo = Float.parseFloat(p.getOrDefault("ritardo", "0.12"));
+                zanne.add(z);
+            }
             for (Element o : oggetti(d, "kill")) kill[ep].add(rett(o, mapH));
             List<Element> f = oggetti(d, "finish");
             usc[ep] = f.isEmpty() ? null : rett(f.get(0), mapH);
@@ -270,8 +281,8 @@ public class Risolutore
             float[] m = mtv(ax, ay, aw, ah, o);
             if (m == null) continue;
             if (FRAGILE > 0) {   // urto proprio sullo spigolo: il risultato dipende da arrotondamenti minimi
-                float ox = Math.min(ax + aw - o.x, o.x + o.w - ax), oy = Math.min(ay + ah - o.y, o.y + o.h - ay);
-                if (Math.abs(ox - oy) < FRAGILE) { s.morto = true; return; }
+                float ox = profondita(ax, ax + aw, o.x, o.x + o.w), oy = profondita(ay, ay + ah, o.y, o.y + o.h);
+                if (Math.abs(ox - oy) < FRAGILE || Math.min(ox, oy) < 0.01f) { s.morto = true; return; }
             }
             s.x += m[1] * m[0];
             s.y += m[2] * m[0];
@@ -287,6 +298,15 @@ public class Risolutore
     }
 
     float vxCorrente;
+
+    /** Profondita' di sovrapposizione su un asse come la calcola libGDX (con il caso "contenuto"). */
+    static float profondita(float minA, float maxA, float minB, float maxB)
+    {
+        float o = Math.min(maxA, maxB) - Math.max(minA, minB);
+        if ((minA < minB && maxA > maxB) || (minB < minA && maxB > maxA))
+            o += Math.min(Math.abs(minA - minB), Math.abs(maxA - maxB));
+        return o;
+    }
 
     boolean bloccato(S s, int dest)
     {
@@ -380,6 +400,27 @@ public class Risolutore
                 if (s.cTimer[i] <= 0 && !occ) { s.cStato[i] = 0; s.cTimer[i] = 0; }
             }
         }
+        // zanne che cadono
+        float cxp = s.x + dim / 2f, piedi = s.y + hbB;
+        for (int j = 0; j < zanne.size(); j++) {
+            Zanna z = zanne.get(j); int i = crolli.size() + j;
+            if (s.cStato[i] == 0 && z.ep == s.ep && cxp >= z.r.x - z.distanza && cxp <= z.r.x + z.r.w + z.distanza && piedi < z.r.y) {
+                s.cStato[i] = 1; s.cTimer[i] = z.ritardo;
+            }
+            if (s.cStato[i] == 1) {
+                s.cTimer[i] -= DT;
+                if (s.cTimer[i] <= 0) { s.cStato[i] = 2; s.cTimer[i] = 0; }
+            }
+            if (s.cStato[i] == 2) {
+                s.cTimer[i] += 1;   // fotogrammi di caduta (inizia nello stesso fotogramma in cui si attiva)
+                float n = s.cTimer[i], off = 900f * DT * DT * n * (n + 1) / 2f;
+                if (z.r.y - off < -200) s.cStato[i] = 3;
+            }
+            if (s.cStato[i] == 2 && z.ep == s.ep) {
+                float n = s.cTimer[i], off = 900f * DT * DT * n * (n + 1) / 2f;
+                if (overlaps(s.x + hbL, s.y + hbB, hbR - hbL, hbT - hbB, new R(z.r.x, z.r.y - off, z.r.w, z.r.h))) { s.morto = true; return; }
+            }
+        }
         // trappole
         for (R k : kill[s.ep]) if (RIDUCI_KILL > 0 ? overlaps(s.x + hbL + RIDUCI_KILL, s.y + hbB + RIDUCI_KILL, hbR - hbL - 2 * RIDUCI_KILL, hbT - hbB - 2 * RIDUCI_KILL, k) : hb(s, k)) { s.morto = true; return; }
         // scarabei
@@ -458,6 +499,11 @@ public class Risolutore
         for (int i = 0; i < s.cStato.length; i++) {
             h = mix(h, s.cStato[i]);
             if (s.cStato[i] == 0) continue;
+            if (i >= crolli.size()) {
+                Zanna z = zanne.get(i - crolli.size());
+                if (s.cStato[i] != 3 && vicino(cx, cy, z.r, 0, -400, 150)) h = mix(h, 7000 + Math.round(s.cTimer[i] * (s.cStato[i] == 1 ? 60 : 0.25f)));
+                continue;
+            }
             boolean vicino = !VICINANZA || vicino(cx, cy, crolli.get(i).r, 0, 0, RAGGIO);
             if (!vicino) continue;
             if (s.cStato[i] == 1) h = mix(h, (int) Math.ceil(s.cTimer[i] / (K * DT)));
@@ -500,7 +546,7 @@ public class Risolutore
         s0.ep = epInizio;
         s0.x = (st.x + st.w / 2f) - dim / 2f;
         s0.y = st.y - dim * PIEDI;
-        s0.cStato = new byte[crolli.size()]; s0.cTimer = new float[crolli.size()];
+        s0.cStato = new byte[nSlot()]; s0.cTimer = new float[nSlot()];
         s0.art = conArtefatto;
         s0.cooldown = 0;
         for (int f = 0; f < ASSESTA; f++) passo(s0, 0);
@@ -508,7 +554,7 @@ public class Risolutore
         serveArtefatto = artefatto != null && !conArtefatto;
 
         LongHashSet visti = new LongHashSet(1 << 22);
-        int nc = crolli.size();
+        int nc = nSlot();
         s0.indice = registra(-1, 0);
         visti.add(chiave(s0));
         CodaStati corrente = new CodaStati(nc), prossimo = new CodaStati(nc);
@@ -539,6 +585,7 @@ public class Risolutore
                 if (rilascio && !puoTagliare) continue;
                 if (salto && rilascio) continue;
                 if (viaggio && !puoViaggiare) continue;
+                if (viaggio && e) continue;   // nel gioco E userebbe ancora l'epoca di prima: niente T+E insieme
                 S n = s.copia();
                 n.costo = costo;
                 if (viaggio) {
@@ -569,13 +616,14 @@ public class Risolutore
         S s = new S();
         R st = start[ep] != null ? start[ep] : start[1 - ep];
         s.ep = ep; s.x = (st.x + st.w / 2f) - dim / 2f; s.y = st.y - dim * PIEDI;
-        s.cStato = new byte[crolli.size()]; s.cTimer = new float[crolli.size()]; s.art = conArt;
+        s.cStato = new byte[nSlot()]; s.cTimer = new float[nSlot()]; s.art = conArt;
         tuttiScarabei = (1 << scR.size()) - 1;
         serveArtefatto = artefatto != null && !conArt;
         for (int f = 0; f < ASSESTA; f++) passo(s, 0);
         int viaggi = 0;
         for (int a : az) {
             int dir = a & 3;
+            if ((a & 16) != 0 && (a & 32) != 0) return "FALLITO (T ed E insieme)";
             if ((a & 16) != 0) {
                 if (!(nEp == 2 && s.art && s.cooldown <= 0 && !bloccato(s, 1 - s.ep))) return "FALLITO (viaggio non possibile)";
                 s.ep = 1 - s.ep; s.cooldown = 0.45f; s.suMobile = -1; viaggi++;
@@ -598,7 +646,7 @@ public class Risolutore
         S s = new S();
         R st = start[ep] != null ? start[ep] : start[1 - ep];
         s.ep = ep; s.x = (st.x + st.w / 2f) - dim / 2f; s.y = st.y - dim * PIEDI;
-        s.cStato = new byte[crolli.size()]; s.cTimer = new float[crolli.size()]; s.art = conArt;
+        s.cStato = new byte[nSlot()]; s.cTimer = new float[nSlot()]; s.art = conArt;
         for (int f = 0; f < ASSESTA; f++) passo(s, 0);
         try (PrintWriter w = new PrintWriter(file)) {
             int fr = 0;
@@ -774,6 +822,7 @@ public class Risolutore
             r.K = sc.nextInt();
             while (sc.hasNextInt()) az.add(sc.nextInt());
             System.out.println("L" + liv + " ep=" + ep + " " + r.verifica(ep, liv >= 3, az));
+            if (System.getenv("TRACCIA") != null) r.traccia(ep, liv >= 3, az, System.getenv("TRACCIA"));
             return;
         }
         if (a.length > 3) r.K = Integer.parseInt(a[3]);
