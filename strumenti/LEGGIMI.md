@@ -5,7 +5,7 @@ e cerca il numero minimo di viaggi nel tempo per finire un livello prendendo tut
 Il risultato va nelle proprietà `viaggiPresente` / `viaggiPassato` della mappa del presente.
 
     javac Risolutore.java
-    DT=60 ASSESTA=120 ORDINE=misto QARIA=6 java -Xmx6g Risolutore ../assets 5 0 4 0.5 0.5 40
+    DT=60 ASSESTA=120 ORDINE=misto QARIA=6 FRAGILE=0.01 java -Xmx6g Risolutore ../assets 5 0 4 0.5 0.5 40
 
 (livello 5, partendo nel presente; `1` al posto di `0` = partendo nel passato).
 Non usa libGDX: serve solo Java. Se cambi un livello, ricalcola i suoi numeri.

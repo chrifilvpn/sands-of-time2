@@ -269,6 +269,10 @@ public class Risolutore
             float yPrima = s.y;
             float[] m = mtv(ax, ay, aw, ah, o);
             if (m == null) continue;
+            if (FRAGILE > 0) {   // urto proprio sullo spigolo: il risultato dipende da arrotondamenti minimi
+                float ox = Math.min(ax + aw - o.x, o.x + o.w - ax), oy = Math.min(ay + ah - o.y, o.y + o.h - ay);
+                if (Math.abs(ox - oy) < FRAGILE) { s.morto = true; return; }
+            }
             s.x += m[1] * m[0];
             s.y += m[2] * m[0];
             boolean spintoGiu = s.y < yPrima;
@@ -468,6 +472,7 @@ public class Risolutore
 
     static boolean VICINANZA = true;
     static float qFase = 0.2f, OFF = 0f;
+    static float FRAGILE = System.getenv("FRAGILE") != null ? Float.parseFloat(System.getenv("FRAGILE")) : 0f;
     static boolean FASE_SOLO_A_TERRA = System.getenv("FASE_A_TERRA") != null;
     static float RAGGIO = 200;
 
